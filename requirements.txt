@@ -1,0 +1,4 @@
+# Core dependencies only - minimal setup
+streamlit>=1.31.0
+beautifulsoup4>=4.12.2
+requests>=2.31.0
