@@ -1,3 +1,5 @@
+import os
+import sys
 import streamlit as st
 import re
 import json
@@ -5,28 +7,172 @@ from backend.task_breakdown import break_task
 from backend.summarization import summarize_content
 from backend.question_generation import generate_quiz
 from backend.chat_assistant import ask_question
-import os
-import sys
 
-# App metadata
+
 APP_TITLE = "TaskTamer"
-APP_DESCRIPTION = "**TaskTamer** helps you manage complex tasks, summarize content, and test your knowledge."
+APP_DESCRIPTION = "**TaskTamer** helps you break down complex tasks, summarize content, and test your knowledge."
 DEVELOPER_NAME = "Alessandra Batalha"
 
-# Apply custom styles
+
 def apply_styles():
     st.markdown("""
     <style>
-        .main-header {font-size: 2.5rem; margin-bottom: 1rem;}
-        .section-header {font-size: 1.8rem; margin-top: 1.5rem; margin-bottom: 1rem;}
-        .info-box {background-color: #f0f2f6; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem;}
-        .success-box {background-color: #d1e7dd; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem;}
-        .warning-box {background-color: #fff3cd; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem;}
-        .task-item {background-color: #f8f9fa; border-left: 4px solid #4b6fff; padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 0 0.25rem 0.25rem 0;}
+        /* Main color scheme from blue to purple gradient */
+        :root {
+            --blue-color: #1E88E5;
+            --teal-color: #27C0AC;
+            --green-color: #8FDB69;
+            --purple-color: #9B4DCA;
+            --light-purple-color: #D24CFF;
+        }
+        
+        .main-header {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, var(--blue-color), var(--purple-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+        
+        .section-header {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--blue-color), var(--teal-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+        
+        .info-box {
+            background-color: #E3F2FD;
+            border-left: 5px solid var(--blue-color);
+            border-radius: 0.5rem;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .success-box {
+            background-color: #E8F5E9;
+            border-left: 5px solid var(--green-color);
+            border-radius: 0.5rem;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .warning-box {
+            background-color: #FFF8E1;
+            border-left: 5px solid var(--teal-color);
+            border-radius: 0.5rem;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .task-item {
+            background-color: #FAFAFA;
+            border-left: 4px solid var(--blue-color);
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            font-size: 1.05rem;
+        }
+        
+        /* Stylize buttons */
+        .stButton>button {
+            background: linear-gradient(90deg, var(--blue-color), var(--purple-color));
+            color: white;
+            font-weight: 500;
+            border: none;
+            border-radius: 0.3rem;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .stButton>button:hover {
+            background: linear-gradient(90deg, var(--purple-color), var(--blue-color));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* Tabs styling */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 2px;
+        }
+        
+        .stTabs [data-baseweb="tab"] {
+            background-color: #F3F4F6;
+            padding: 10px 20px;
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .stTabs [aria-selected="true"] {
+            background: linear-gradient(90deg, var(--blue-color), var(--teal-color));
+            color: white;
+        }
+        
+        /* Chat message styling */
+        .user-message {
+            background-color: #F0F4FF;
+            padding: 12px;
+            border-radius: 10px 10px 0 10px;
+            margin: 10px 0;
+            align-self: flex-end;
+            max-width: 80%;
+        }
+        
+        .assistant-message {
+            background: linear-gradient(135deg, #E2F0FF, #F2E7FF);
+            padding: 12px;
+            border-radius: 10px 10px 10px 0;
+            margin: 10px 0;
+            align-self: flex-start;
+            max-width: 80%;
+        }
+        
+        /* Logo styling */
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, var(--blue-color), var(--light-purple-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .getting-things-done {
+            font-size: 0.9rem;
+            color: var(--green-color);
+            font-weight: 500;
+            margin-left: 10px;
+        }
+        
+        /* Quiz styling */
+        .quiz-question {
+            background-color: #F8F9FA;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--blue-color);
+        }
+        
+        .correct-answer {
+            background-color: #E8F5E9;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 4px solid var(--green-color);
+        }
+        
+        .incorrect-answer {
+            background-color: #FFEBEE;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #F44336;
+        }
     </style>
     """, unsafe_allow_html=True)
 
-# Helper UI functions
+
 def main_header(text):
     st.markdown(f'<h1 class="main-header">{text}</h1>', unsafe_allow_html=True)
 
@@ -46,29 +192,42 @@ def task_item(text, idx=None):
     prefix = f"{idx}. " if idx is not None else ""
     st.markdown(f'<div class="task-item">{prefix}{text}</div>', unsafe_allow_html=True)
 
-# Helper functions
+def logo_header():
+    st.markdown(
+        '<div style="display: flex; align-items: center;">'
+        '<span class="logo-text">TASK TAMER</span>'
+        '<span class="getting-things-done">GETTING THINGS DONE</span>'
+        '</div>', 
+        unsafe_allow_html=True
+    )
+
+
 def is_valid_url(url):
     url_pattern = re.compile(r'^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[a-zA-Z0-9-._~:/?#[\]@!$&\'()*+,;=]*)?$')
     return bool(url_pattern.match(url))
 
-# Page renderers
+
 def render_home_page():
-    main_header("Welcome to TaskTamer")
+    logo_header()
     
-    st.write("TaskTamer is your personal productivity assistant that helps you break down complex tasks, summarize information, and generate quizzes.")
+    st.write("Your personal productivity assistant that helps you break down complex tasks, summarize information, and generate quizzes.")
+    
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("Task Breakdown")
+        st.subheader("🧩 Task Breakdown")
         st.write("Turn overwhelming tasks into manageable steps")
             
-        st.subheader("Summarization")
+        st.subheader("📝 Summarization")
         st.write("Extract key insights from text and web pages")
     
     with col2:
-        st.subheader("Quiz Generator")
+        st.subheader("🧠 Quiz Generator")
         st.write("Create quizzes from your learning materials")
+        
+        st.subheader("🤖 Otto - Your Assistant")
+        st.write("Ask questions and get help anytime")
     
     info_box("""
     <b>Getting Started:</b>
@@ -94,6 +253,8 @@ def render_task_page():
             st.write("• Write a research paper on AI ethics")
             st.write("• Create a personal budget plan for the next year")
             st.write("• Organize a virtual conference for 100+ attendees")
+            st.write("• Design a marketing campaign for a new product")
+            st.write("• Plan a website redesign project")
         
         submit_button = st.form_submit_button("Break Down Task")
     
@@ -123,7 +284,7 @@ def render_task_page():
 def render_summary_page():
     main_header("Content Summarizer")
     
-    st.write("Summarize text or web pages")
+    st.write("Summarize text or web pages to extract key insights quickly.")
     
     tab1, tab2 = st.tabs(["Text Input", "URL"])
     
@@ -199,6 +360,7 @@ def display_quiz(quiz_data):
         st.session_state.quiz_score = 0
     
     for i, question in enumerate(quiz_data):
+        st.markdown(f'<div class="quiz-question">', unsafe_allow_html=True)
         st.subheader(f"Question {i+1}")
         st.write(question.get("question", ""))
         
@@ -212,8 +374,17 @@ def display_quiz(quiz_data):
                 options,
                 key=f"quiz_{i}"
             )
+        st.markdown('</div>', unsafe_allow_html=True)
     
-    if st.button("Submit Quiz"):
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        submit_button = st.button("Submit Quiz")
+    
+    with col2:
+        download_button = st.button("Download Quiz")
+    
+    if submit_button:
         st.session_state.quiz_submitted = True
         st.session_state.quiz_score = 0
         
@@ -233,11 +404,11 @@ def display_quiz(quiz_data):
             correct = st.session_state.quiz_answers[answer_key]
             
             if selected == correct:
-                st.success(f"Question {i+1}: Correct!")
+                st.markdown(f'<div class="correct-answer">Question {i+1}: ✓ Correct!</div>', unsafe_allow_html=True)
             else:
-                st.error(f"Question {i+1}: Incorrect. The correct answer is: {correct}")
+                st.markdown(f'<div class="incorrect-answer">Question {i+1}: ✗ Incorrect. The correct answer is: {correct}</div>', unsafe_allow_html=True)
     
-    if st.button("Download Quiz"):
+    if download_button:
         quiz_json = json.dumps(quiz_data, indent=2)
         st.download_button(
             label="Download as JSON",
@@ -249,7 +420,7 @@ def display_quiz(quiz_data):
 def render_quiz_page():
     main_header("Quiz Generator")
     
-    st.write("Create quizzes from text or web pages")
+    st.write("Create interactive quizzes from text or web pages to test your knowledge.")
     
     tab1, tab2 = st.tabs(["Text Input", "URL"])
     
@@ -260,7 +431,7 @@ def render_quiz_page():
             help="Paste the text you want to create a quiz from"
         )
         
-        num_questions = st.slider("Number of questions", 1, 5, 3)
+        num_questions = st.slider("Number of questions", 1, 8, 3)
         
         if st.button("Generate Quiz", key="text_quiz_btn"):
             if not text_content:
@@ -278,7 +449,7 @@ def render_quiz_page():
             help="Works with most websites"
         )
         
-        num_questions = st.slider("Number of questions", 1, 5, 3, key="url_num_q")
+        num_questions = st.slider("Number of questions", 1, 8, 3, key="url_num_q")
         
         if st.button("Generate Quiz", key="url_quiz_btn"):
             if not url:
@@ -295,34 +466,52 @@ def render_quiz_page():
             display_quiz(quiz)
 
 def render_chat_page():
-    main_header("TaskTamer Chat Assistant")
+    main_header("Otto - Your TaskTamer Assistant")
+    
+    st.write("Hi, I'm Otto! I can help you with task management, summarization, and quiz generation. Ask me anything about using TaskTamer or how to be more productive!")
+    
     
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
     
+  
     for message in st.session_state.chat_history:
         role = message["role"]
         content = message["content"]
         
         if role == "user":
-            st.write(f"You: {content}")
+            st.markdown(f'<div class="user-message"><strong>You:</strong> {content}</div>', unsafe_allow_html=True)
         else:
-            st.write(f"TaskTamer: {content}")
+            st.markdown(f'<div class="assistant-message"><strong>Otto:</strong> {content}</div>', unsafe_allow_html=True)
     
-    question = st.text_input("Ask a question about TaskTamer:")
     
-    if st.button("Ask"):
+    with st.form(key="chat_form"):
+        question = st.text_input("Ask Otto a question:")
+        submit_button = st.form_submit_button("Send")
+    
+    if submit_button:
         if not question:
             warning_box("Please enter a question")
             return
             
-        with st.spinner("Thinking..."):
+       
+        st.session_state.chat_history.append({"role": "user", "content": question})
+        
+       
+        with st.spinner("Otto is thinking..."):
             answer = ask_question(question)
             
-        st.session_state.chat_history.append({"role": "user", "content": question})
+        
         st.session_state.chat_history.append({"role": "assistant", "content": answer})
         
+        
         st.experimental_rerun()
+        
+    
+    if st.session_state.chat_history:
+        if st.button("Clear Chat"):
+            st.session_state.chat_history = []
+            st.experimental_rerun()
 
 def render_about_page():
     main_header("About TaskTamer")
@@ -338,18 +527,42 @@ def render_about_page():
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("#### Task Breakdown")
+        st.markdown("#### 🧩 Task Breakdown")
         st.write("Convert complex tasks into manageable, actionable steps")
         
-        st.markdown("#### Content Summarization")
+        st.markdown("#### 📝 Content Summarization")
         st.write("Extract key insights from text and web pages")
     
     with col2:
-        st.markdown("#### Quiz Generation")
+        st.markdown("#### 🧠 Quiz Generation")
         st.write("Create interactive quizzes from any content to test your knowledge")
         
-        st.markdown("#### AI Assistant")
-        st.write("Ask questions about the content and get intelligent responses")
+        st.markdown("#### 🤖 Otto - Your Assistant")
+        st.write("Get help and answers to your productivity questions")
+    
+    section_header("How TaskTamer Helps You")
+    
+    st.write("""
+    TaskTamer was created with a focus on helping students and professionals, particularly those with ADHD or who struggle 
+    with information overload. By breaking complex tasks into manageable steps, extracting key information, and providing 
+    interactive learning tools, TaskTamer helps users:
+    
+    - **Reduce overwhelm** by transforming large projects into clear, actionable steps
+    - **Improve focus** by identifying the most important information in any content
+    - **Enhance learning** through interactive quizzes that reinforce knowledge
+    - **Save time** by quickly summarizing long articles or web pages
+    """)
+    
+    section_header("Technology")
+    
+    st.write("""
+    TaskTamer leverages natural language processing techniques to analyze content and provide intelligent assistance.
+    The application is built with:
+    
+    - **Streamlit** for the interactive user interface
+    - **BeautifulSoup** for web content extraction
+    - **Custom NLP algorithms** for text analysis and processing
+    """)
     
     section_header("About the Developer")
     
@@ -357,9 +570,7 @@ def render_about_page():
     TaskTamer was created by **Alessandra Batalha** as part of her final year project at Dublin Business School. 
     The project represents the culmination of her studies in Computer Science, combining practical software 
     engineering skills with artificial intelligence techniques.
-    """)
     
-    st.write("""
     Alessandra developed TaskTamer with a focus on helping students and professionals manage their learning and 
     work tasks more efficiently. The project demonstrates her skills in full-stack development and user experience design.
     """)
@@ -371,38 +582,37 @@ def render_about_page():
 
 def main():
     try:
-        # Apply custom styles
+        
         apply_styles()
         
-        # Initialize session state
+      
         if "initialized" not in st.session_state:
             st.session_state.initialized = True
             st.session_state.task_data = {}
             st.session_state.quiz_history = []
             st.session_state.chat_history = []
         
-        # Sidebar configuration
-        st.sidebar.title(APP_TITLE)
+       
+        st.sidebar.title("TaskTamer")
+        st.sidebar.markdown("Your productivity assistant")
+        st.sidebar.markdown("---")
+        
         pages = {
             "Home": render_home_page,
             "Task Breakdown": render_task_page,
             "Summarization": render_summary_page,
             "Quiz Generator": render_quiz_page,
-            "Chat Assistant": render_chat_page,
+            "Otto Assistant": render_chat_page,
             "About": render_about_page
         }
+        
         selection = st.sidebar.radio("Navigate", list(pages.keys()), index=0)
         
-        # Main content
-        st.info(f"{APP_DESCRIPTION}\n\nMade with ❤️ by {DEVELOPER_NAME}")
-        st.markdown("---")
+        st.sidebar.markdown("---")
+        st.sidebar.info(f"{APP_DESCRIPTION}\n\nMade with ❤️ by {DEVELOPER_NAME}")
         
-        # Render selected page
-        page_function = pages.get(selection)
-        if page_function:
-            page_function()
-        else:
-            st.error("Page not found. Please select a valid page.")
+        
+        pages[selection]()
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
         st.write("Please try again or contact support.")

@@ -1,6 +1,107 @@
 import re
+import random
 from typing import List, Dict, Any, Optional
-from backend.summarization import fetch_webpage_content
+from backend.summarization import fetch_webpage_content, get_sentences
+
+def extract_keywords(text: str) -> List[str]:
+    """
+    Extract potential keywords from text.
+    
+    Args:
+        text: The text to extract keywords from
+        
+    Returns:
+        List of potential keywords
+    """
+    
+    words = re.findall(r'\b[A-Za-z][A-Za-z-]+\b', text)
+    
+    
+    stopwords = {'the', 'a', 'an', 'and', 'or', 'but', 'if', 'then', 'else', 'when', 
+                'at', 'from', 'by', 'for', 'with', 'about', 'against', 'between',
+                'into', 'through', 'during', 'before', 'after', 'above', 'below',
+                'to', 'of', 'in', 'on', 'as', 'is', 'are', 'was', 'were', 'be', 'been',
+                'has', 'have', 'had', 'do', 'does', 'did', 'can', 'could', 'will',
+                'would', 'should', 'might', 'that', 'this', 'these', 'those', 'it',
+                'they', 'them', 'their', 'he', 'she', 'his', 'her', 'we', 'us', 'our',
+                'you', 'your', 'i', 'me', 'my'}
+    
+    keywords = [word for word in words if word.lower() not in stopwords and len(word) > 3]
+    
+    return keywords
+
+def get_distractors(keywords: List[str], correct_answer: str) -> List[str]:
+    """
+    Generate distractor options for quiz questions.
+    
+    Args:
+        keywords: List of potential keywords to use as distractors
+        correct_answer: The correct answer
+        
+    Returns:
+        List of distractor options
+    """
+   
+    filtered_keywords = [w for w in keywords if w != correct_answer and w.lower() != correct_answer.lower()]
+    
+   
+    if len(filtered_keywords) < 3:
+        return ["Option A", "Option B", "Option C"]
+    
+    
+    distractors = random.sample(filtered_keywords, min(3, len(filtered_keywords)))
+    
+    return distractors
+
+def create_fill_in_blank_question(sentence: str, keywords: List[str]) -> Dict[str, Any]:
+    """
+    Create a fill-in-the-blank question from a sentence.
+    
+    Args:
+        sentence: The sentence to create a question from
+        keywords: List of potential keywords to use
+        
+    Returns:
+        A question dict with question, options, and answer
+    """
+    words = sentence.split()
+    if len(words) < 5:
+        return {}
+        
+    
+    potential_blanks = []
+    for i in range(2, len(words) - 2):
+        word = words[i]
+        
+        if len(word) > 3 and word.lower() not in {'with', 'that', 'this', 'from', 'their', 'about'}:
+            
+            cleaned_word = re.sub(r'[^\w\s]', '', word)
+            if cleaned_word:
+                potential_blanks.append((i, cleaned_word))
+    
+    if not potential_blanks:
+        return {}
+    
+   
+    blank_pos, correct_answer = random.choice(potential_blanks)
+    
+    
+    question_words = words.copy()
+    question_words[blank_pos] = "_____"
+    question = " ".join(question_words)
+    
+    
+    distractors = get_distractors(keywords, correct_answer)
+    
+    
+    options = [correct_answer] + distractors
+    random.shuffle(options)
+    
+    return {
+        "question": f"Fill in the blank: {question}",
+        "options": options,
+        "answer": correct_answer
+    }
 
 def generate_quiz(content: Optional[str] = None, url: Optional[str] = None, num_questions: int = 3) -> List[Dict[str, Any]]:
     """
@@ -14,50 +115,50 @@ def generate_quiz(content: Optional[str] = None, url: Optional[str] = None, num_
     Returns:
         List of quiz questions with options and answers
     """
-    # If URL is provided, fetch the content
+   
     if url:
         content = fetch_webpage_content(url)
         
     if not content:
         return []
     
-    # Validate number of questions
+   
     num_questions = max(1, min(num_questions, 10))
     
-    # Split content into sentences
-    sentences = re.split(r'(?<=[.!?])\s+', content)
     
-    # Select sentences to create questions from
-    selected_sentences = []
-    step = max(1, len(sentences) // (num_questions + 1))
+    sentences = get_sentences(content)
+    if len(sentences) < 3:
+        return []
     
-    for i in range(0, min(len(sentences), num_questions * step), step):
-        if i < len(sentences):
-            selected_sentences.append(sentences[i])
     
-    # Create quiz questions
+    keywords = extract_keywords(content)
+    
+   
+    valid_sentences = [s for s in sentences if len(s.split()) >= 5]
+    if len(valid_sentences) < num_questions:
+       
+        valid_sentences = valid_sentences * (num_questions // len(valid_sentences) + 1)
+    
+    selected_sentences = random.sample(valid_sentences, num_questions)
+    
+   
     quiz = []
+    for sentence in selected_sentences:
+        question = create_fill_in_blank_question(sentence, keywords)
+        if question:
+            quiz.append(question)
     
-    for i, sentence in enumerate(selected_sentences[:num_questions]):
-        # Create a fill-in-the-blank question
-        words = sentence.split()
-        if len(words) < 4:
-            continue
+    
+    while len(quiz) < num_questions and len(valid_sentences) > len(quiz):
+        remaining = [s for s in valid_sentences if s not in selected_sentences]
+        if not remaining:
+            break
             
-        # Pick a word to remove (not first or last word)
-        word_index = min(len(words) // 2, len(words) - 2)
-        correct_word = words[word_index]
+        new_sentence = random.choice(remaining)
+        selected_sentences.append(new_sentence)
         
-        # Create incorrect options
-        incorrect_options = ["Option A", "Option B", "Option C"]
-        
-        # Create the question
-        question = " ".join(words[:word_index] + ["_____"] + words[word_index+1:])
-        
-        quiz.append({
-            "question": f"Fill in the blank: {question}",
-            "options": [correct_word] + incorrect_options,
-            "answer": correct_word
-        })
+        question = create_fill_in_blank_question(new_sentence, keywords)
+        if question:
+            quiz.append(question)
     
     return quiz
