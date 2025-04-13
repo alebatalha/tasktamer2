@@ -1,9 +1,7 @@
-import os
-import sys
 import streamlit as st
 import re
 import json
-from backend.task_breakdown import break_task
+from backend.task_breakdown import break_task, TaskBreakdown
 from backend.summarization import summarize_content
 from backend.question_generation import generate_quiz
 from backend.chat_assistant import ask_question
@@ -78,6 +76,70 @@ def apply_styles():
             font-size: 1.05rem;
         }
         
+        /* Enhanced Task Breakdown Styles */
+        .task-overview {
+            background-color: #F3F6FF;
+            border-radius: 0.8rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #E1E5F2;
+        }
+        
+        .step-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--blue-color);
+        }
+        
+        .step-heading {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: #2C3E50;
+        }
+        
+        .step-meta {
+            display: flex;
+            font-size: 0.9rem;
+            color: #7F8C8D;
+            margin-bottom: 12px;
+        }
+        
+        .step-meta-item {
+            margin-right: 16px;
+        }
+        
+        .step-tip {
+            background: #F8F9FA;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            border-left: 3px solid var(--teal-color);
+        }
+        
+        .step-high {
+            border-left: 4px solid #FF5252;
+        }
+        
+        .step-medium {
+            border-left: 4px solid #FFC107;
+        }
+        
+        .step-low {
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .reward-card {
+            background: linear-gradient(135deg, #E3F2FD, #F3E5F5);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 24px;
+            border: 1px dashed var(--purple-color);
+        }
+        
         /* Stylize buttons */
         .stButton>button {
             background: linear-gradient(90deg, var(--blue-color), var(--purple-color));
@@ -110,8 +172,7 @@ def apply_styles():
             background: linear-gradient(90deg, var(--blue-color), var(--teal-color));
             color: white;
         }
-        
-        /* Chat message styling */
+                /* Chat message styling */
         .user-message {
             background-color: #F0F4FF;
             padding: 12px;
@@ -201,6 +262,24 @@ def logo_header():
         unsafe_allow_html=True
     )
 
+def render_step_card(step):
+    priority_class = f"step-{step['priority'].lower()}" if 'priority' in step else ""
+    
+    st.markdown(f'<div class="step-card {priority_class}">', unsafe_allow_html=True)
+    st.markdown(f'<div class="step-heading">Step {step["number"]}: {step["description"]}</div>', unsafe_allow_html=True)
+    
+    st.markdown('<div class="step-meta">', unsafe_allow_html=True)
+    if 'time' in step:
+        st.markdown(f'<div class="step-meta-item">⏱️ Time: {step["time"]} min</div>', unsafe_allow_html=True)
+    if 'priority' in step:
+        st.markdown(f'<div class="step-meta-item">🔍 Priority: {step["priority"]}</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    if 'adhd_tip' in step:
+        st.markdown(f'<div class="step-tip">💡 ADHD Tip: {step["adhd_tip"]}</div>', unsafe_allow_html=True)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+
 
 def is_valid_url(url):
     url_pattern = re.compile(r'^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[a-zA-Z0-9-._~:/?#[\]@!$&\'()*+,;=]*)?$')
@@ -241,6 +320,20 @@ def render_home_page():
 def render_task_page():
     main_header("Task Breakdown")
     
+    
+    with st.expander("Customize your task breakdown"):
+        detail_level = st.radio(
+            "Level of detail",
+            ["basic", "standard", "comprehensive"],
+            index=1,
+            help="Choose how detailed your task breakdown should be."
+        )
+        
+        
+        st.write("These options help make your task breakdown more personalized to your needs.")
+        adhd_support = st.checkbox("Include ADHD-friendly tips", value=True, 
+                                  help="Add specific strategies to help maintain focus and motivation")
+        
     with st.form(key="task_form"):
         task_description = st.text_area(
             "Enter a complex task you want to break down:", 
@@ -264,20 +357,46 @@ def render_task_page():
             return
             
         with st.spinner("Breaking down your task..."):
-            steps = break_task(task_description)
             
-        if steps:
-            section_header("Here's your task breakdown:")
+            task_breaker = TaskBreakdown(detail_level)
+            result = task_breaker.break_task(task_description)
             
-            for i, step in enumerate(steps, 1):
-                task_item(step, i)
+        if result and "steps" in result and result["steps"]:
+            n
+            st.markdown(f'<div class="task-overview">', unsafe_allow_html=True)
+            st.markdown(f"<h3>{result['task']}</h3>", unsafe_allow_html=True)
+            st.write(result["overview"])
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            section_header("Step-by-Step Breakdown")
+            
+            for step in result["steps"]:
+                render_step_card(step)
                 
-            st.download_button(
-                label="Download Task Breakdown",
-                data="\n".join([f"{i+1}. {step}" for i, step in enumerate(steps)]),
-                file_name="task_breakdown.txt",
-                mime="text/plain"
-            )
+            
+            if result["reward_suggestion"]:
+                st.markdown(f'<div class="reward-card">🎉 <strong>Reward Suggestion:</strong> {result["reward_suggestion"]}</div>', unsafe_allow_html=True)
+                
+           
+            col1, col2 = st.columns(2)
+            with col1:
+               
+                simple_steps = "\n".join([f"{i+1}. {step['description']}" for i, step in enumerate(result["steps"])])
+                st.download_button(
+                    label="Download Simple Steps",
+                    data=simple_steps,
+                    file_name="task_breakdown.txt",
+                    mime="text/plain"
+                )
+            
+            with col2:
+                
+                st.download_button(
+                    label="Download Full Breakdown",
+                    data=json.dumps(result, indent=2),
+                    file_name="task_breakdown.json",
+                    mime="application/json"
+                )
         else:
             warning_box("Could not generate steps. Please try rewording your task.")
 
@@ -474,7 +593,7 @@ def render_chat_page():
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
     
-  
+    
     for message in st.session_state.chat_history:
         role = message["role"]
         content = message["content"]
@@ -484,7 +603,7 @@ def render_chat_page():
         else:
             st.markdown(f'<div class="assistant-message"><strong>Otto:</strong> {content}</div>', unsafe_allow_html=True)
     
-    
+   
     with st.form(key="chat_form"):
         question = st.text_input("Ask Otto a question:")
         submit_button = st.form_submit_button("Send")
@@ -494,10 +613,10 @@ def render_chat_page():
             warning_box("Please enter a question")
             return
             
-       
+        
         st.session_state.chat_history.append({"role": "user", "content": question})
         
-       
+      
         with st.spinner("Otto is thinking..."):
             answer = ask_question(question)
             
@@ -585,14 +704,14 @@ def main():
         
         apply_styles()
         
-      
+        
         if "initialized" not in st.session_state:
             st.session_state.initialized = True
             st.session_state.task_data = {}
             st.session_state.quiz_history = []
             st.session_state.chat_history = []
         
-       
+        
         st.sidebar.title("TaskTamer")
         st.sidebar.markdown("Your productivity assistant")
         st.sidebar.markdown("---")
