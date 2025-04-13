@@ -362,7 +362,7 @@ def render_task_page():
             result = task_breaker.break_task(task_description)
             
         if result and "steps" in result and result["steps"]:
-            n
+            
             st.markdown(f'<div class="task-overview">', unsafe_allow_html=True)
             st.markdown(f"<h3>{result['task']}</h3>", unsafe_allow_html=True)
             st.write(result["overview"])
