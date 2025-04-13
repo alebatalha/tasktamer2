@@ -1,7 +1,8 @@
 from typing import List, Dict, Any, Optional
+import random
 
 def generate_adhd_tip() -> str:
-    
+
     tips = [
         "Use a colorful pen to make this step more engaging!",
         "Stand up or move around while working on this to stay energized.",
@@ -19,11 +20,9 @@ def generate_adhd_tip() -> str:
         "Verbalize your thoughts out loud to maintain focus and clarity.",
         "Try the '5-4-3-2-1' grounding technique if you feel scattered (notice 5 things you see, 4 things you touch, etc.)",
     ]
-    import random
     return random.choice(tips)
 
 def generate_reward_suggestion() -> str:
-    
     rewards = [
         "Watch a short funny video after completing this section!",
         "Take a 5-minute dance break to your favorite song!",
@@ -41,17 +40,17 @@ def generate_reward_suggestion() -> str:
         "Do a quick mindfulness meditation to reset your focus.",
         "Add a sticker or checkmark to your progress tracker!"
     ]
-    import random
     return random.choice(rewards)
 
 class TaskBreakdown:
     
+    
     def __init__(self, detail_level: str = "standard"):
-       
+    
         self.detail_level = detail_level
         
     def get_step_count(self) -> int:
-      
+
         if self.detail_level == "basic":
             return 5
         elif self.detail_level == "comprehensive":
@@ -60,7 +59,7 @@ class TaskBreakdown:
             return 7
 
     def break_task(self, task_description: str, detail_level: Optional[str] = None) -> Dict[str, Any]:
-      
+     
         if detail_level:
             self.detail_level = detail_level
             
@@ -74,11 +73,12 @@ class TaskBreakdown:
         
         task_lower = task_description.lower()
         
-     
         task_type = self._identify_task_type(task_lower)
         
+      
         overview = self._create_overview(task_description, task_type)
         
+       
         steps = self._generate_steps(task_type, self.get_step_count())
         
        
@@ -92,7 +92,7 @@ class TaskBreakdown:
         }
     
     def _identify_task_type(self, task_lower: str) -> str:
-     
+       
         if "essay" in task_lower or "paper" in task_lower or "research" in task_lower or "write" in task_lower and "report" in task_lower:
             return "academic_writing"
         elif "presentation" in task_lower or "slides" in task_lower:
@@ -149,20 +149,21 @@ class TaskBreakdown:
         return overviews.get(task_type, overviews["general"])
     
     def _generate_steps(self, task_type: str, step_count: int) -> List[Dict[str, Any]]:
-      
+        """Generate steps based on task type."""
+       
         from .task_templates import get_task_steps
         
-        
+      
         raw_steps = get_task_steps(task_type)
         
-        
+       
         if len(raw_steps) > step_count:
-            
+           
             adjusted_steps = []
             step_indices = [int(i * len(raw_steps) / step_count) for i in range(step_count)]
             for i in range(len(step_indices)):
                 if i + 1 < len(step_indices):
-                    
+                  
                     if step_indices[i + 1] - step_indices[i] > 1:
                         combined_step = raw_steps[step_indices[i]].copy()
                         for j in range(step_indices[i] + 1, step_indices[i + 1]):
@@ -174,7 +175,7 @@ class TaskBreakdown:
                     adjusted_steps.append(raw_steps[step_indices[i]])
             raw_steps = adjusted_steps
         elif len(raw_steps) < step_count:
-            
+       
             extended_steps = []
             for step in raw_steps:
                 extended_steps.append(step)
@@ -182,19 +183,19 @@ class TaskBreakdown:
                     for sub_step in step["sub_steps"][:step_count - len(extended_steps)]:
                         new_step = {
                             "description": sub_step,
-                            "time": step["time"] // 2,  # Estimate half the time for sub-step
+                            "time": step["time"] // 2,  
                             "priority": "Medium" if step["priority"] == "High" else "Low"
                         }
                         extended_steps.append(new_step)
             raw_steps = extended_steps[:step_count]
         
-        
+      
         formatted_steps = []
         for index, step in enumerate(raw_steps[:step_count], 1):
             formatted_step = {
                 "number": index,
                 "description": step["description"],
-                "time": step.get("time", 15),  # Default to 15 min if not specified
+                "time": step.get("time", 15), 
                 "priority": step.get("priority", "Medium"),
                 "adhd_tip": step.get("adhd_tip", generate_adhd_tip())
             }
@@ -202,11 +203,17 @@ class TaskBreakdown:
             
         return formatted_steps
 
-
 def break_task(task_description: str) -> List[str]:
-
+    """
+    Legacy function to break down a task into steps.
+    
+    Args:
+        task_description: The task to break down
+        
+    Returns:
+        List of step descriptions
+    """
     task_breaker = TaskBreakdown()
     result = task_breaker.break_task(task_description)
-    
-    
+
     return [step["description"] for step in result["steps"]]
