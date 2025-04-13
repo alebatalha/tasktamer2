@@ -1,7 +1,7 @@
 from typing import List, Dict, Any, Optional
 
 def generate_adhd_tip() -> str:
-    """Generate a helpful ADHD-friendly tip."""
+    
     tips = [
         "Use a colorful pen to make this step more engaging!",
         "Stand up or move around while working on this to stay energized.",
@@ -23,7 +23,7 @@ def generate_adhd_tip() -> str:
     return random.choice(tips)
 
 def generate_reward_suggestion() -> str:
-    """Generate a reward suggestion for completing steps."""
+    
     rewards = [
         "Watch a short funny video after completing this section!",
         "Take a 5-minute dance break to your favorite song!",
@@ -45,19 +45,13 @@ def generate_reward_suggestion() -> str:
     return random.choice(rewards)
 
 class TaskBreakdown:
-    """Class to handle task breakdown, optimized for ADHD support."""
     
     def __init__(self, detail_level: str = "standard"):
-        """
-        Initialize the task breakdown with customization options.
-        
-        Args:
-            detail_level: Level of detail for the breakdown ("basic", "standard", or "comprehensive")
-        """
+       
         self.detail_level = detail_level
         
     def get_step_count(self) -> int:
-        """Determine number of steps based on detail level."""
+      
         if self.detail_level == "basic":
             return 5
         elif self.detail_level == "comprehensive":
@@ -66,16 +60,7 @@ class TaskBreakdown:
             return 7
 
     def break_task(self, task_description: str, detail_level: Optional[str] = None) -> Dict[str, Any]:
-        """
-        Break a complex task into manageable steps with ADHD support.
-        
-        Args:
-            task_description: The task to break down
-            detail_level: Override the instance detail level if provided
-            
-        Returns:
-            Dictionary containing task breakdown with steps, overview, and rewards
-        """
+      
         if detail_level:
             self.detail_level = detail_level
             
@@ -107,7 +92,7 @@ class TaskBreakdown:
         }
     
     def _identify_task_type(self, task_lower: str) -> str:
-        """Identify the type of task from the description."""
+     
         if "essay" in task_lower or "paper" in task_lower or "research" in task_lower or "write" in task_lower and "report" in task_lower:
             return "academic_writing"
         elif "presentation" in task_lower or "slides" in task_lower:
@@ -134,7 +119,7 @@ class TaskBreakdown:
             return "general"
     
     def _create_overview(self, task: str, task_type: str) -> str:
-        """Create an encouraging overview for the task."""
+      
         overviews = {
             "academic_writing": f"This task involves planning, researching, and writing {task}. It might seem overwhelming, but breaking it into smaller steps makes it totally doable! We'll focus on one small chunk at a time.",
             
@@ -164,8 +149,7 @@ class TaskBreakdown:
         return overviews.get(task_type, overviews["general"])
     
     def _generate_steps(self, task_type: str, step_count: int) -> List[Dict[str, Any]]:
-        """Generate steps based on task type."""
-       
+      
         from .task_templates import get_task_steps
         
         
@@ -220,15 +204,7 @@ class TaskBreakdown:
 
 
 def break_task(task_description: str) -> List[str]:
-    """
-    Legacy function to break down a task into steps.
-    
-    Args:
-        task_description: The task to break down
-        
-    Returns:
-        List of step descriptions
-    """
+
     task_breaker = TaskBreakdown()
     result = task_breaker.break_task(task_description)
     

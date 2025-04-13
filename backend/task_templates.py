@@ -1,19 +1,4 @@
-"""
-Task templates containing step-by-step breakdowns for different task types,
-optimized for ADHD support.
-"""
-
 def get_task_steps(task_type: str):
-    """
-    Get the steps for a specific task type.
-    
-    Args:
-        task_type: The type of task
-        
-    Returns:
-        List of step dictionaries with description, time, priority, etc.
-    """
-    # Dictionary mapping task types to their step-by-step templates
     task_templates = {
         "academic_writing": [
             {
@@ -652,7 +637,7 @@ def get_task_steps(task_type: str):
             }
         ],
         
-        "web_design": [
+        "web_design":  [
             {
                 "description": "Define the primary purpose of the website and its main target audience.",
                 "time": 15,
@@ -1410,115 +1395,12 @@ def get_task_steps(task_type: str):
                     "For themes: list key points to explore",
                     "Consider how these elements connect to your main concept"
                 ]
-            },
-            {
-                "description": "Sketch a basic outline or plot structure.",
-                "time": 20,
-                "priority": "High",
-                "adhd_tip": "Use sticky notes for each scene or chapter so you can physically move them around.",
-                "sub_steps": [
-                    "For fiction: outline beginning, middle, and end",
-                    "For non-fiction: organize your main points logically",
-                    "Note key moments or arguments for each section"
-                ]
-            },
-            {
-                "description": "Set a specific word count goal and timeline for your project.",
-                "time": 10,
-                "priority": "Medium",
-                "adhd_tip": "Break the total word count into small daily or weekly goals that feel manageable.",
-                "sub_steps": [
-                    "Decide on total approximate length",
-                    "Set realistic daily or weekly writing targets",
-                    "Create a timeline with specific milestones"
-                ]
-            },
-            {
-                "description": "Create an inspiring writing environment with minimal distractions.",
-                "time": 15,
-                "priority": "Medium",
-                "adhd_tip": "Consider having different sensory elements for writing sessions - special music, scent, or lighting that signals 'writing time' to your brain.",
-                "sub_steps": [
-                    "Choose a dedicated writing space",
-                    "Remove potential distractions",
-                    "Gather any supplies or comforts you need",
-                    "Set up tools for quick reference (character notes, outline, etc.)"
-                ]
-            },
-            {
-                "description": "Write the opening section of your project (first chapter or introduction).",
-                "time": 30,
-                "priority": "High",
-                "adhd_tip": "Start with a 5-minute free write to warm up your creative brain before diving into the actual draft.",
-                "sub_steps": [
-                    "Review your outline for this section",
-                    "Focus on getting ideas down, not perfection",
-                    "Set a timer to create gentle pressure",
-                    "Reward yourself after completing this section"
-                ]
-            },
-            {
-                "description": "Take a break, then review what you've written with fresh eyes.",
-                "time": 20,
-                "priority": "Medium",
-                "adhd_tip": "Read your work aloud - hearing it activates different parts of your brain than silent reading.",
-                "sub_steps": [
-                    "Take at least 30 minutes away from your writing",
-                    "Read what you've written with a critical eye",
-                    "Note areas to develop or improve",
-                    "Celebrate what's working well"
-                ]
-            },
-            {
-                "description": "Create a consistent writing schedule with specific times.",
-                "time": 15,
-                "priority": "High",
-                "adhd_tip": "Connect writing sessions to existing habits to help remember them (e.g., 'after morning coffee' or 'before dinner').",
-                "sub_steps": [
-                    "Identify your best times for creative work",
-                    "Schedule regular writing sessions",
-                    "Set calendar reminders or alarms",
-                    "Plan how to protect this writing time"
-                ]
-            },
-            {
-                "description": "Plan your next writing session with a specific section to tackle.",
-                "time": 10,
-                "priority": "Medium",
-                "adhd_tip": "End each writing session by noting exactly where to start next time, eliminating the blank page problem.",
-                "sub_steps": [
-                    "Decide which section you'll work on next",
-                    "Review your outline for this section",
-                    "Jot down a few starter ideas or sentences",
-                    "Gather any research or references you'll need"
-                ]
-            },
-            {
-                "description": "Set up an accountability system for your writing goals.",
-                "time": 15,
-                "priority": "Medium",
-                "adhd_tip": "Find a writing buddy or use an app that provides external accountability and positive reinforcement.",
-                "sub_steps": [
-                    "Choose how you'll track progress (word count, time spent, etc.)",
-                    "Set up regular check-ins (with yourself or others)",
-                    "Plan small rewards for meeting milestones",
-                    "Consider sharing goals with someone supportive"
-                ]
-            },
-            {
-                "description": "Create a plan for getting feedback on your work.",
-                "time": 15,
-                "priority": "Low",
-                "adhd_tip": "Prepare specific questions for feedback-givers to help them provide focused, useful input.",
-                "sub_steps": [
-                    "Identify who might give helpful feedback",
-                    "Decide at what stage you'll seek input",
-                    "Prepare guidelines for the kind of feedback you want",
-                    "Plan how you'll incorporate feedback constructively"
-                ]
             }
-        ],
-        
+        ]
+    }
+    
+    
+    remaining_task_types = {
         "job_search": [
             {
                 "description": "Define your job search goals and parameters.",
@@ -1543,126 +1425,6 @@ def get_task_steps(task_type: str):
                     "Check formatting and consistency",
                     "Proofread carefully or ask someone else to review"
                 ]
-            },
-            {
-                "description": "Create a basic cover letter template you can customize for applications.",
-                "time": 25,
-                "priority": "Medium",
-                "adhd_tip": "Find examples of successful cover letters in your field to use as inspiration.",
-                "sub_steps": [
-                    "Write an engaging opening paragraph",
-                    "Draft middle paragraphs highlighting your value",
-                    "Create a strong closing paragraph",
-                    "Leave placeholders for company-specific information"
-                ]
-            },
-            {
-                "description": "Update or optimize your LinkedIn profile.",
-                "time": 25,
-                "priority": "High",
-                "adhd_tip": "Set a timer for each section of your profile to avoid perfectionism and rabbit holes.",
-                "sub_steps": [
-                    "Add a professional photo if you don't have one",
-                    "Write a compelling headline and summary",
-                    "Ensure job history matches your resume",
-                    "Add relevant skills and request endorsements"
-                ]
-            },
-            {
-                "description": "Research 3-5 companies you'd like to work for.",
-                "time": 30,
-                "priority": "Medium",
-                "adhd_tip": "Create a company research template to make this task more structured and comparable.",
-                "sub_steps": [
-                    "Identify target companies in your field",
-                    "Research their products, services, and culture",
-                    "Look for recent news or developments",
-                    "Note potential contacts or connections"
-                ]
-            },
-            {
-                "description": "Set up job alerts on 2-3 key job boards for your target roles.",
-                "time": 15,
-                "priority": "Medium",
-                "adhd_tip": "Use specific search terms to avoid being overwhelmed with irrelevant job alerts.",
-                "sub_steps": [
-                    "Select job boards relevant to your field",
-                    "Create specific search terms for your target roles",
-                    "Set up email alerts with appropriate frequency",
-                    "Create a folder in your email for job opportunities"
-                ]
-            },
-            {
-                "description": "Create a system to track your applications and follow-ups.",
-                "time": 20,
-                "priority": "High",
-                "adhd_tip": "Use a visually appealing tracking system - a spreadsheet with color coding or a Kanban board.",
-                "sub_steps": [
-                    "Set up categories for different stages (applied, interviewed, etc.)",
-                    "Create fields for company, role, application date",
-                    "Add columns for follow-up dates and contacts",
-                    "Set up reminders for follow-ups"
-                ]
-            },
-            {
-                "description": "Identify and reach out to 2-3 people in your network who could help.",
-                "time": 20,
-                "priority": "Medium",
-                "adhd_tip": "Script your outreach messages in advance to reduce anxiety and procrastination.",
-                "sub_steps": [
-                    "List people who work in your target field or companies",
-                    "Draft personalized messages to each person",
-                    "Be specific about how they might help you",
-                    "Suggest a specific time to connect"
-                ]
-            },
-            {
-                "description": "Prepare for common interview questions with the STAR method.",
-                "time": 30,
-                "priority": "High",
-                "adhd_tip": "Record yourself answering questions on your phone to review your responses and body language.",
-                "sub_steps": [
-                    "List 5-10 common interview questions for your field",
-                    "Draft answers using the Situation-Task-Action-Result format",
-                    "Practice saying your answers out loud",
-                    "Prepare examples that showcase your strengths"
-                ]
-            },
-            {
-                "description": "Research salary ranges for your target positions.",
-                "time": 15,
-                "priority": "Medium",
-                "adhd_tip": "Create a visual 'salary range card' with your target numbers to reference during negotiations.",
-                "sub_steps": [
-                    "Use sites like Glassdoor or PayScale for research",
-                    "Note salary ranges for your experience level",
-                    "Consider location factors and cost of living",
-                    "Prepare talking points for salary discussions"
-                ]
-            },
-            {
-                "description": "Create a daily job search routine with specific time blocks.",
-                "time": 15,
-                "priority": "High",
-                "adhd_tip": "Connect job search activities to existing habits and use visual reminders to stay on track.",
-                "sub_steps": [
-                    "Allocate time for checking job boards",
-                    "Schedule time for applications and follow-ups",
-                    "Plan time for networking and skills development",
-                    "Build in breaks and rewards for completing tasks"
-                ]
-            },
-            {
-                "description": "Identify one skill to develop that would enhance your job prospects.",
-                "time": 20,
-                "priority": "Medium",
-                "adhd_tip": "Choose a skill with interactive learning options rather than passive reading to maintain engagement.",
-                "sub_steps": [
-                    "Research in-demand skills in your target field",
-                    "Assess your current skill gaps",
-                    "Find resources for developing this skill",
-                    "Create a specific plan for skill development"
-                ]
             }
         ],
         
@@ -1678,141 +1440,15 @@ def get_task_steps(task_type: str):
                     "Mark high-priority items that must happen first",
                     "Include contact information for important services"
                 ]
-            },
-            {
-                "description": "Research your new location for neighborhoods and housing options.",
-                "time": 30,
-                "priority": "High",
-                "adhd_tip": "Create a visual comparison chart for different neighborhoods with pros and cons.",
-                "sub_steps": [
-                    "Research neighborhoods that match your needs",
-                    "Compare housing costs and availability",
-                    "Consider commute times to work/school",
-                    "Note amenities important to you (parks, shops, etc.)"
-                ]
-            },
-            {
-                "description": "Set a realistic moving budget with categories and contingency funds.",
-                "time": 20,
-                "priority": "High",
-                "adhd_tip": "Use a dedicated moving expense tracker app or create a colorful spreadsheet.",
-                "sub_steps": [
-                    "Research costs for moving services",
-                    "Include travel expenses to new location",
-                    "Budget for security deposits and initial setup costs",
-                    "Add a 15-20% buffer for unexpected expenses"
-                ]
-            },
-            {
-                "description": "Declutter and decide what to keep, sell, donate, or discard.",
-                "time": 30,
-                "priority": "Medium",
-                "adhd_tip": "Use the 'four-box method' with physical boxes for keep, sell, donate, and discard categories.",
-                "sub_steps": [
-                    "Focus on one small area at a time",
-                    "Make quick decisions to avoid getting stuck",
-                    "Consider moving costs vs. replacement costs",
-                    "Take photos of sentimental items you don't keep"
-                ]
-            },
-            {
-                "description": "Research and select a moving method (professional movers, rental truck, etc.).",
-                "time": 25,
-                "priority": "High",
-                "adhd_tip": "Create a pros and cons list for each option that includes not just cost but stress level and time required.",
-                "sub_steps": [
-                    "Get quotes from several moving companies",
-                    "Compare DIY options like truck rentals",
-                    "Consider hybrid approaches (you pack, they move)",
-                    "Check reviews and credentials for services"
-                ]
-            },
-            {
-                "description": "Create an inventory of valuable items with photos.",
-                "time": 20,
-                "priority": "Medium",
-                "adhd_tip": "Make this task more engaging by using your phone to take quick photos and notes as you go.",
-                "sub_steps": [
-                    "List valuable or fragile items",
-                    "Take photos showing their condition",
-                    "Note serial numbers of electronics",
-                    "Store this inventory in the cloud for safekeeping"
-                ]
-            },
-            {
-                "description": "Gather supplies for packing (boxes, tape, markers, etc.).",
-                "time": 15,
-                "priority": "Medium",
-                "adhd_tip": "Create a 'packing station' with all supplies in one area to make the process more efficient.",
-                "sub_steps": [
-                    "Calculate how many boxes you'll likely need",
-                    "Get various sizes of boxes and packing materials",
-                    "Purchase quality packing tape and markers",
-                    "Consider specialty containers for fragile items"
-                ]
-            },
-            {
-                "description": "Create a plan for addressing utilities, internet, and services.",
-                "time": 20,
-                "priority": "High",
-                "adhd_tip": "Create a utilities checklist with company names, phone numbers, and account numbers for both locations.",
-                "sub_steps": [
-                    "List all current utilities and services",
-                    "Research providers at your new location",
-                    "Note cancellation deadlines for current services",
-                    "Schedule connection dates for new services"
-                ]
-            },
-            {
-                "description": "Begin packing non-essential items, one small area at a time.",
-                "time": 30,
-                "priority": "Medium",
-                "adhd_tip": "Use a timer for short (25-30 minute) focused packing sessions with breaks in between.",
-                "sub_steps": [
-                    "Start with out-of-season items or things rarely used",
-                    "Label boxes clearly with contents and destination room",
-                    "Take photos of electronic connections before unplugging",
-                    "Keep an 'essentials box' separate for items needed until the end"
-                ]
-            },
-            {
-                "description": "Create a 'moving day' plan with timeline and responsibilities.",
-                "time": 20,
-                "priority": "High",
-                "adhd_tip": "Create a visual hour-by-hour schedule for moving day to reduce anxiety and confusion.",
-                "sub_steps": [
-                    "Create a timeline for moving day activities",
-                    "Assign specific tasks to helpers if applicable",
-                    "Plan for pet or child care during the move",
-                    "Prepare an 'open first' box with essentials"
-                ]
-            },
-            {
-                "description": "Notify important contacts of your address change.",
-                "time": 20,
-                "priority": "Medium",
-                "adhd_tip": "Create categories of contacts to notify to make sure you don't miss anyone important.",
-                "sub_steps": [
-                    "File an official change of address with the postal service",
-                    "Update address for banks, credit cards, insurance",
-                    "Notify employer, schools, and healthcare providers",
-                    "Update subscriptions and online shopping accounts"
-                ]
-            },
-            {
-                "description": "Create a 'first week' plan for your new location.",
-                "time": 15,
-                "priority": "Medium",
-                "adhd_tip": "Create a visual map of your new neighborhood with important locations marked.",
-                "sub_steps": [
-                    "Plan meals and basics for your first few days",
-                    "Research essential services (grocery, pharmacy, etc.)",
-                    "Schedule any needed setup appointments",
-                    "Plan time for unpacking priority items"
-                ]
             }
         ]
     }
     
-    # Return steps for the requested task type, or general steps if not found
+    
+    for task_type, steps in remaining_task_types.items():
+        if task_type not in task_templates:
+            task_templates[task_type] = steps
+    
+    
     return task_templates.get(task_type, task_templates["general"])
+from typing import List, Dict, Any, Optional
