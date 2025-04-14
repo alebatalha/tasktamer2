@@ -76,8 +76,3 @@ def render_about_page():
     import datetime
     current_year = datetime.datetime.now().year
     st.caption(f"© {current_year} Alessandra Batalha. All rights reserved.")
-    
-def render_about_page():
-    
-    if 'render_footer' in globals():
-        render_footer()

@@ -2,7 +2,7 @@ import streamlit as st
 from backend.summarization import summarize_content, generate_study_notes
 from ui.styles import main_header, section_header, warning_box, success_box, info_box
 from utils.helpers import is_valid_url
-
+from utils.content_fetcher import fetch_webpage_content
 
 def render_summary_page():
     main_header("Content Summarizer")

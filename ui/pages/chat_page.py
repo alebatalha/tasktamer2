@@ -43,7 +43,7 @@ def render_chat_page():
         st.session_state.chat_history.append({"role": "assistant", "content": answer})
         
         
-        st.experimental_rerun()
+        st.rerun()
         
 
     if st.session_state.chat_history:

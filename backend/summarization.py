@@ -1,6 +1,7 @@
 from typing import List, Dict, Any, Optional, Tuple, Union
 import requests
 import re
+import numpy as np
 import logging
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
@@ -11,9 +12,8 @@ from nltk.corpus import stopwords
 from nltk.probability import FreqDist
 from nltk.stem import PorterStemmer
 from string import punctuation
-import numpy as np
 from collections import Counter
-
+from utils.content_fetcher import fetch_webpage_content
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

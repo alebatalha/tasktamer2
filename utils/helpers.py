@@ -5,8 +5,9 @@ import os
 import streamlit as st
 from typing import List, Dict, Any, Union
 
+
 def is_valid_url(url: str) -> bool:
-    """Validates if a string is a properly formatted URL."""
+    
     url_pattern = re.compile(
         r'^(https?:\/\/)?' 
         r'(www\.)?' 
