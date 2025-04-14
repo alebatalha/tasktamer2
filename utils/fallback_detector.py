@@ -22,4 +22,6 @@ def youtube_transcript_api_available():
 
 USING_FALLBACK = not haystack_available()
 USING_NLTK = nltk_available()
-USING_NLTK_FALLBACK = not USING_FALLBACK and USING_NLTK
+USING_NLTK_WITH_HAYSTACK = not USING_FALLBACK and USING_NLTK
+USING_NLTK_FALLBACK = USING_NLTK
+USING_YOUTUBE_API = youtube_transcript_api_available()
