@@ -198,44 +198,6 @@ def is_valid_url(url):
     )
     return bool(url_pattern.match(url))
 
-def render_octopus_logo_sidebar():
-    octopus_svg = """
-    <svg width="80" height="80" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-            <linearGradient id="octopusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#00BCD4" />
-                <stop offset="100%" stop-color="#9C27B0" />
-            </linearGradient>
-        </defs>
-        <g fill="url(#octopusGradient)">
-            <!-- Octopus body -->
-            <circle cx="50" cy="40" r="25" />
-            
-            <!-- Tentacles -->
-            <path d="M25,50 Q15,60 20,80" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
-            <path d="M35,60 Q25,70 15,75" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
-            <path d="M50,65 Q50,80 45,90" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
-            <path d="M65,60 Q75,70 85,75" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
-            <path d="M75,50 Q85,60 80,80" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
-            
-            <!-- Eyes -->
-            <circle cx="40" cy="35" r="5" fill="white" />
-            <circle cx="60" cy="35" r="5" fill="white" />
-            <circle cx="40" cy="35" r="2" fill="#333" />
-            <circle cx="60" cy="35" r="2" fill="#333" />
-        </g>
-    </svg>
-    """
-    
-    st.sidebar.markdown(f"""
-    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
-        {octopus_svg}
-    </div>
-    <div style="text-align: center; margin-bottom: 20px;">
-        <span style="font-size: 1.5rem; font-weight: 700; background: linear-gradient(90deg, #00BCD4, #9C27B0); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">TaskTamer</span>
-    </div>
-    """, unsafe_allow_html=True)
-
 def render_home_page():
         
     st.write("Your personal productivity assistant with eight tentacles ready to help you break down complex tasks, summarize information, and generate quizzes!")
