@@ -1,5 +1,6 @@
 import streamlit as st
 import json
+import time
 from backend.question_generation import generate_quiz
 from ui.styles import main_header, section_header, warning_box, success_box, info_box
 from utils.helpers import is_valid_url
@@ -28,9 +29,30 @@ def render_quiz_page():
                 return
                 
             with st.spinner("Generating quiz..."):
-                quiz = generate_quiz(content=text_content, num_questions=num_questions)
-                
-            display_quiz(quiz)
+                try:
+                    
+                    start_time = time.time()
+                    quiz = generate_quiz(content=text_content, num_questions=num_questions)
+                    generation_time = time.time() - start_time
+                    
+                    
+                    st.session_state.last_quiz_data = quiz
+                    st.session_state.last_generation_time = generation_time
+                    
+                    
+                    if not quiz:
+                        warning_box("Failed to generate quiz: No questions created")
+                        return
+                        
+                    if isinstance(quiz, list) and len(quiz) > 0 and isinstance(quiz[0], dict) and "error" in quiz[0]:
+                        warning_box(f"Quiz generation error: {quiz[0]['error']}")
+                        return
+                        
+                    
+                    display_quiz(quiz)
+                except Exception as e:
+                    st.error(f"Error generating quiz: {str(e)}")
+                    return
     
     with tab2:
         url = st.text_input(
@@ -50,38 +72,92 @@ def render_quiz_page():
                 return
                 
             with st.spinner("Fetching content and generating quiz..."):
-                quiz = generate_quiz(url=url, num_questions=num_questions)
-                
-            display_quiz(quiz)
+                try:
+                    start_time = time.time()
+                    quiz = generate_quiz(url=url, num_questions=num_questions)
+                    generation_time = time.time() - start_time
+                    
+                  
+                    st.session_state.last_quiz_data = quiz
+                    st.session_state.last_generation_time = generation_time
+                    
+                    
+                    if not quiz:
+                        warning_box("Failed to generate quiz: No questions created")
+                        return
+                        
+                    if isinstance(quiz, list) and len(quiz) > 0 and isinstance(quiz[0], dict) and "error" in quiz[0]:
+                        warning_box(f"Quiz generation error: {quiz[0]['error']}")
+                        return
+                    
+                    
+                    display_quiz(quiz)
+                except Exception as e:
+                    st.error(f"Error generating quiz: {str(e)}")
+                    return
+
+   
+    if st.checkbox("Debug Options", value=False):
+        st.subheader("Debug Information")
+        
+        if st.button("Generate Test Quiz"):
+            test_quiz = [
+                {
+                    "question": "Fill in the blank: The sky is _____ on a clear day.",
+                    "options": ["blue", "green", "red", "yellow"],
+                    "answer": "blue"
+                },
+                {
+                    "question": "Fill in the blank: Water boils at _____ degrees Celsius at standard pressure.",
+                    "options": ["100", "0", "50", "200"],
+                    "answer": "100"
+                },
+                {
+                    "question": "Fill in the blank: The capital of France is _____.",
+                    "options": ["Paris", "London", "Berlin", "Madrid"],
+                    "answer": "Paris"
+                }
+            ]
+            display_quiz(test_quiz)
+            
+        if "last_quiz_data" in st.session_state:
+            st.write(f"Last generation time: {st.session_state.last_generation_time:.2f} seconds")
+            st.json(st.session_state.last_quiz_data)
 
 def display_quiz(quiz_data):
+    
     if not quiz_data:
         warning_box("Could not generate quiz. Please try with different content.")
         return
     
-   
-    if isinstance(quiz_data, list) and quiz_data and "error" in quiz_data[0]:
+
+    if isinstance(quiz_data, list) and quiz_data and isinstance(quiz_data[0], dict) and "error" in quiz_data[0]:
         warning_box(quiz_data[0]["error"])
         return
         
     section_header("Your Quiz")
     
+
     if "quiz_answers" not in st.session_state:
         st.session_state.quiz_answers = {}
         st.session_state.quiz_submitted = False
         st.session_state.quiz_score = 0
     
+
     for i, question in enumerate(quiz_data):
         st.markdown(f'<div class="quiz-question">', unsafe_allow_html=True)
         st.subheader(f"Question {i+1}")
+        
         question_text = question.get("question", "No question available.")
         st.write(question_text)
         
         options = question.get("options", [])
         if options:
+          
             answer_key = f"q_{i}"
             st.session_state.quiz_answers[answer_key] = question.get("answer", "")
             
+    
             st.radio(
                 "Select your answer:",
                 options,
@@ -99,10 +175,12 @@ def display_quiz(quiz_data):
     with col2:
         download_button = st.button("Download Quiz")
     
+
     if submit_button:
         st.session_state.quiz_submitted = True
         st.session_state.quiz_score = 0
         
+ 
         for i in range(len(quiz_data)):
             answer_key = f"q_{i}"
             selected = st.session_state.get(f"quiz_{i}", "")
@@ -111,9 +189,11 @@ def display_quiz(quiz_data):
             if selected and selected == correct:
                 st.session_state.quiz_score += 1
         
+ 
         score_percentage = (st.session_state.quiz_score / len(quiz_data)) * 100 if quiz_data else 0
         success_box(f"Your score: {st.session_state.quiz_score}/{len(quiz_data)} ({score_percentage:.1f}%)")
         
+
         for i in range(len(quiz_data)):
             answer_key = f"q_{i}"
             selected = st.session_state.get(f"quiz_{i}", "")
@@ -124,6 +204,7 @@ def display_quiz(quiz_data):
             elif selected:
                 st.markdown(f'<div class="incorrect-answer">Question {i+1}: ✗ Incorrect. The correct answer is: {correct}</div>', unsafe_allow_html=True)
     
+
     if download_button:
         quiz_json = json.dumps(quiz_data, indent=2)
         st.download_button(
@@ -133,6 +214,7 @@ def display_quiz(quiz_data):
             mime="application/json"
         )
     
+
     if "quiz_history" in st.session_state and st.session_state.quiz_history:
         with st.expander("Quiz History"):
             history_data = {
