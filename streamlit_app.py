@@ -652,7 +652,7 @@ def main():
    
     pages = {
         "Home": render_home_page,
-        "Task Breakdown": render_task_page,
+        #"Task Breakdown": break_down_task,
         "Summarization": render_summary_page,
         "Quiz Generator": render_quiz_page,
         "Chat": render_chat_page,
