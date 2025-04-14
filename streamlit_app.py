@@ -241,7 +241,7 @@ def render_logo():
         '</div>', 
         unsafe_allow_html=True
     )
-    render_octopus_logo()
+    #render_octopus_logo()
 
 def render_home_page():
     render_logo()
