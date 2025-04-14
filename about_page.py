@@ -9,46 +9,8 @@ def section_header(text):
 def info_box(text):
     st.markdown(f'<div style="background-color: rgba(0, 188, 212, 0.1); border-left: 5px solid #00BCD4; border-radius: 0.5rem; padding: 1.2rem; margin-bottom: 1.5rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">{text}</div>', unsafe_allow_html=True)
 
-def render_octopus_logo():
-    octopus_svg = """
-    <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-            <linearGradient id="octopusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#00BCD4" />
-                <stop offset="100%" stop-color="#9C27B0" />
-            </linearGradient>
-        </defs>
-        <g fill="url(#octopusGradient)">
-            <!-- Octopus body -->
-            <circle cx="50" cy="40" r="25" />
-            
-            <!-- Tentacles -->
-            <path d="M25,50 Q15,60 20,80" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
-            <path d="M35,60 Q25,70 15,75" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
-            <path d="M50,65 Q50,80 45,90" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
-            <path d="M65,60 Q75,70 85,75" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
-            <path d="M75,50 Q85,60 80,80" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
-            
-            <!-- Eyes -->
-            <circle cx="40" cy="35" r="5" fill="white" />
-            <circle cx="60" cy="35" r="5" fill="white" />
-            <circle cx="40" cy="35" r="2" fill="#333" />
-            <circle cx="60" cy="35" r="2" fill="#333" />
-        </g>
-    </svg>
-    """
-    
-    st.markdown(f"""
-    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
-        {octopus_svg}
-    </div>
-    """, unsafe_allow_html=True)
-
 def render_about_page():
     main_header("About TaskTamer")
-    
-   
-    render_octopus_logo()
     
     st.write("""
     TaskTamer is a productivity tool designed to help users manage their learning and workflow more effectively. 
