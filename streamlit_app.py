@@ -250,182 +250,40 @@ def render_home_page():
     
     col1, col2 = st.columns(2)
     
+    # Function to handle navigation
+    def button_click(destination):
+        st.session_state.navigation = destination
+    
     with col1:
         st.subheader("🧩 Task Breakdown")
         st.write("Turn overwhelming tasks into manageable steps")
-        if st.button("Try Task Breakdown", key="task_btn"):
-            st.session_state.navigation = "Task Breakdown"
-            st.rerun()
+        st.button("Try Task Breakdown", 
+                 key="task_btn", 
+                 on_click=button_click,
+                 args=("Task Breakdown",))
             
         st.subheader("📝 Summarization")
         st.write("Extract key insights from text and web pages")
-        if st.button("Try Summarization", key="summary_btn"):
-            st.session_state.navigation = "Summarization"
-            st.rerun()
+        st.button("Try Summarization", 
+                 key="summary_btn", 
+                 on_click=button_click,
+                 args=("Summarization",))
             
     with col2:
         st.subheader("🧠 Quiz Generator")
         st.write("Create quizzes from your learning materials")
-        if st.button("Try Quiz Generator", key="quiz_btn"):
-            st.session_state.navigation = "Quiz Generator"
-            st.rerun()
+        st.button("Try Quiz Generator", 
+                 key="quiz_btn", 
+                 on_click=button_click,
+                 args=("Quiz Generator",))
             
         st.subheader("🐙 Otto - Your Assistant")
         st.write("Ask questions and get help anytime")
-        if st.button("Ask Otto", key="otto_btn"):
-            st.session_state.navigation = "Chat"
-            st.rerun()
-    
-    info_box("""
-    <b>Getting Started with TaskTamer:</b>
-    <ol>
-        <li>🧭 Select a feature from the sidebar</li>
-        <li>✍️ Enter your task or content</li>
-        <li>✨ Get instant results backed by octopus intelligence!</li>
-    </ol>
-    """)
-    
-    st.markdown("---")
-    st.subheader("✨ How TaskTamer Helps You")
-    
-    with st.expander("🧩 Task Breakdown - Conquer large projects"):
-        st.write("""
-        Breaking down large, complex tasks into manageable steps helps reduce overwhelm and makes progress easier to track.
-        TaskTamer analyzes your task description and creates a personalized, step-by-step plan that's easy to follow.
+        st.button("Ask Otto", 
+                 key="otto_btn", 
+                 on_click=button_click,
+                 args=("Chat",))
         
-        Features:
-        - 📊 Different detail levels to match your needs
-        - 🧠 ADHD-friendly tips included with each step
-        - ⏱️ Time estimates and priority levels
-        - 📥 Downloadable action plans
-        """)
-        
-    with st.expander("📝 Summarization - Extract key insights"):
-        st.write("""
-        Information overload is a common productivity killer. TaskTamer's summarization feature helps you quickly extract
-        the most important points from any text, saving you time and improving comprehension.
-        
-        Features:
-        - 📚 Summarize long articles or documents
-        - 🌐 Process text from websites
-        - 📱 Access summaries anywhere
-        - 📥 Download summaries for later reference
-        """)
-        
-    with st.expander("🧠 Quiz Generator - Test your knowledge"):
-        st.write("""
-        Active recall is one of the most effective study techniques. TaskTamer turns your content into interactive quizzes
-        that help you reinforce learning and identify knowledge gaps.
-        
-        Features:
-        - ❓ Create quizzes from any text
-        - 🔢 Customizable number of questions
-        - 📊 Track your performance
-        - 🎯 Test your understanding
-        """)
-        
-    with st.expander("🐙 Otto Assistant - Get personalized help"):
-        st.write("""
-        Otto is your friendly octopus assistant, ready to answer questions and provide guidance on using TaskTamer
-        or improving your productivity in general.
-        
-        Features:
-        - 💬 Get help with using TaskTamer features
-        - 🧠 Ask about productivity techniques
-        - 🎯 Get personalized advice for focus and time management
-        - 💪 Tips for managing ADHD and overcoming procrastination
-        """)
-    
-    productivity_tips = [
-        "Break large tasks into smaller, manageable steps to reduce overwhelm.",
-        "Use the Pomodoro Technique: 25 minutes of focused work followed by a 5-minute break.",
-        "Plan your most challenging tasks during your peak energy hours.",
-        "Create a dedicated workspace to signal to your brain that it's time to focus.",
-        "Use the 2-minute rule: If a task takes less than 2 minutes, do it immediately.",
-        "Try body doubling - working alongside someone else can boost accountability.",
-        "Set specific, measurable goals rather than vague intentions.",
-        "Schedule buffer time between tasks to account for transitions and unexpected issues.",
-        "Use visual timers to make time more concrete and create urgency.",
-        "Prioritize using the Eisenhower Matrix: Important/Urgent, Important/Not Urgent, etc."
-    ]
-    
-    
-    tip = random.choice(productivity_tips)
-    tip_emojis = ["💡", "✨", "🌟", "⚡", "🚀", "🔑", "💪", "🧠"]
-    
-    st.markdown("---")
-    st.markdown(f"### {random.choice(tip_emojis)} Productivity Tip of the Day")
-    st.markdown(f"*\"{tip}\"*")
-
-def render_task_page():
-    main_header("🧩 Task Breakdown")
-    
-    st.write("Turn overwhelming projects into clear, manageable steps with Otto's eight-tentacled approach!")
-    
-    with st.expander("🎛️ Customize your task breakdown"):
-        detail_level = st.radio(
-            "Level of detail",
-            ["basic", "standard", "comprehensive"],
-            index=1,
-            help="Choose how detailed your task breakdown should be."
-        )
-        
-    with st.form(key="task_form"):
-        task_description = st.text_area(
-            "Enter a complex task you want to break down:", 
-            height=150,
-            help="Describe your task in detail for better results"
-        )
-        
-        examples = st.expander("📋 Show examples")
-        with examples:
-            st.write("• 📝 Write a research paper on AI ethics")
-            st.write("• 💰 Create a personal budget plan for the next year")
-            st.write("• 🎪 Organize a virtual conference for 100+ attendees")
-            st.write("• 📣 Design a marketing campaign for a new product")
-            st.write("• 🖥️ Plan a website redesign project")
-        
-        submit_button = st.form_submit_button("Break Down Task")
-    
-    if submit_button:
-        if not task_description:
-            warning_box("Please enter a task description")
-            return
-            
-        with st.spinner("🐙 Otto is breaking down your task..."):
-            steps = break_down_task(task_description)
-            
-        if steps:
-            section_header("Here's your task breakdown:")
-            
-            for i, step in enumerate(steps, 1):
-                
-                emoji_map = {
-                    "define": "🎯", "create": "✨", "gather": "📚", "research": "🔍",
-                    "identify": "👁️", "plan": "📋", "design": "🎨", "write": "✍️",
-                    "organize": "🗂️", "review": "🔄", "test": "✅", "finalize": "🏁",
-                    "track": "📊", "set": "⚙️", "list": "📝", "break": "🧩"
-                }
-                
-                
-                first_word = step.split()[0].lower()
-                emoji = emoji_map.get(first_word, "✨")
-                
-                
-                enhanced_step = f"{emoji} {step}"
-                task_item(enhanced_step, i)
-                
-            success_box("🐙 Otto has broken down your task successfully! Remember to tackle one step at a time.")
-                
-            st.download_button(
-                label="📥 Download Task Breakdown",
-                data="\n".join([f"{i+1}. {step}" for i, step in enumerate(steps)]),
-                file_name="task_breakdown.txt",
-                mime="text/plain"
-            )
-        else:
-            warning_box("Could not generate steps. Please try rewording your task.")
-
 def render_summary_page():
     main_header("📝 Content Summarizer")
     
