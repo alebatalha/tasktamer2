@@ -87,7 +87,8 @@ def render_about_page():
     
     info_box("""
     <b>Contact:</b><br>
-    For more information about this project or to provide feedback, please contact Alessandra Batalha via Dublin Business School.
+    For more information about this project or to provide feedback, please contact Alessandra Batalha<br><br>
+    <b>GitHub:</b> <a href="https://github.com/alebatalha" target="_blank">@alebatalha</a>
     """)
     
    
