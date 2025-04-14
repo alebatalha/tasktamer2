@@ -241,7 +241,45 @@ def render_logo():
         '</div>', 
         unsafe_allow_html=True
     )
-    #render_octopus_logo()
+    render_octopus_logo()
+
+def render_octopus_logo_sidebar():
+    octopus_svg = """
+    <svg width="80" height="80" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="octopusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00BCD4" />
+                <stop offset="100%" stop-color="#9C27B0" />
+            </linearGradient>
+        </defs>
+        <g fill="url(#octopusGradient)">
+            <!-- Octopus body -->
+            <circle cx="50" cy="40" r="25" />
+            
+            <!-- Tentacles -->
+            <path d="M25,50 Q15,60 20,80" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
+            <path d="M35,60 Q25,70 15,75" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
+            <path d="M50,65 Q50,80 45,90" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
+            <path d="M65,60 Q75,70 85,75" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
+            <path d="M75,50 Q85,60 80,80" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
+            
+            <!-- Eyes -->
+            <circle cx="40" cy="35" r="5" fill="white" />
+            <circle cx="60" cy="35" r="5" fill="white" />
+            <circle cx="40" cy="35" r="2" fill="#333" />
+            <circle cx="60" cy="35" r="2" fill="#333" />
+        </g>
+    </svg>
+    """
+    
+    st.sidebar.markdown(f"""
+    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+        {octopus_svg}
+    </div>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <span style="font-size: 1.5rem; font-weight: 700; background: linear-gradient(90deg, #00BCD4, #9C27B0); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">TaskTamer</span>
+    </div>
+    """, unsafe_allow_html=True)
 
 def render_home_page():
     render_logo()
@@ -283,7 +321,157 @@ def render_home_page():
                  key="otto_btn", 
                  on_click=button_click,
                  args=("Chat",))
+    
+    info_box("""
+    <b>Getting Started with TaskTamer:</b>
+    <ol>
+        <li>🧭 Select a feature from the sidebar</li>
+        <li>✍️ Enter your task or content</li>
+        <li>✨ Get instant results backed by octopus intelligence!</li>
+    </ol>
+    """)
+    
+    st.markdown("---")
+    st.subheader("✨ How TaskTamer Helps You")
+    
+    with st.expander("🧩 Task Breakdown - Conquer large projects"):
+        st.write("""
+        Breaking down large, complex tasks into manageable steps helps reduce overwhelm and makes progress easier to track.
+        TaskTamer analyzes your task description and creates a personalized, step-by-step plan that's easy to follow.
         
+        Features:
+        - 📊 Different detail levels to match your needs
+        - 🧠 ADHD-friendly tips included with each step
+        - ⏱️ Time estimates and priority levels
+        - 📥 Downloadable action plans
+        """)
+        
+    with st.expander("📝 Summarization - Extract key insights"):
+        st.write("""
+        Information overload is a common productivity killer. TaskTamer's summarization feature helps you quickly extract
+        the most important points from any text, saving you time and improving comprehension.
+        
+        Features:
+        - 📚 Summarize long articles or documents
+        - 🌐 Process text from websites
+        - 📱 Access summaries anywhere
+        - 📥 Download summaries for later reference
+        """)
+        
+    with st.expander("🧠 Quiz Generator - Test your knowledge"):
+        st.write("""
+        Active recall is one of the most effective study techniques. TaskTamer turns your content into interactive quizzes
+        that help you reinforce learning and identify knowledge gaps.
+        
+        Features:
+        - ❓ Create quizzes from any text
+        - 🔢 Customizable number of questions
+        - 📊 Track your performance
+        - 🎯 Test your understanding
+        """)
+        
+    with st.expander("🐙 Otto Assistant - Get personalized help"):
+        st.write("""
+        Otto is your friendly octopus assistant, ready to answer questions and provide guidance on using TaskTamer
+        or improving your productivity in general.
+        
+        Features:
+        - 💬 Get help with using TaskTamer features
+        - 🧠 Ask about productivity techniques
+        - 🎯 Get personalized advice for focus and time management
+        - 💪 Tips for managing ADHD and overcoming procrastination
+        """)
+    
+    productivity_tips = [
+        "Break large tasks into smaller, manageable steps to reduce overwhelm.",
+        "Use the Pomodoro Technique: 25 minutes of focused work followed by a 5-minute break.",
+        "Plan your most challenging tasks during your peak energy hours.",
+        "Create a dedicated workspace to signal to your brain that it's time to focus.",
+        "Use the 2-minute rule: If a task takes less than 2 minutes, do it immediately.",
+        "Try body doubling - working alongside someone else can boost accountability.",
+        "Set specific, measurable goals rather than vague intentions.",
+        "Schedule buffer time between tasks to account for transitions and unexpected issues.",
+        "Use visual timers to make time more concrete and create urgency.",
+        "Prioritize using the Eisenhower Matrix: Important/Urgent, Important/Not Urgent, etc."
+    ]
+    
+    
+    tip = random.choice(productivity_tips)
+    tip_emojis = ["💡", "✨", "🌟", "⚡", "🚀", "🔑", "💪", "🧠"]
+    
+    st.markdown("---")
+    st.markdown(f"### {random.choice(tip_emojis)} Productivity Tip of the Day")
+    st.markdown(f"*\"{tip}\"*")
+
+def render_task_page():
+    main_header("🧩 Task Breakdown")
+    
+    st.write("Turn overwhelming projects into clear, manageable steps with Otto's eight-tentacled approach!")
+    
+    with st.expander("🎛️ Customize your task breakdown"):
+        detail_level = st.radio(
+            "Level of detail",
+            ["basic", "standard", "comprehensive"],
+            index=1,
+            help="Choose how detailed your task breakdown should be."
+        )
+        
+    with st.form(key="task_form"):
+        task_description = st.text_area(
+            "Enter a complex task you want to break down:", 
+            height=150,
+            help="Describe your task in detail for better results"
+        )
+        
+        examples = st.expander("📋 Show examples")
+        with examples:
+            st.write("• 📝 Write a research paper on AI ethics")
+            st.write("• 💰 Create a personal budget plan for the next year")
+            st.write("• 🎪 Organize a virtual conference for 100+ attendees")
+            st.write("• 📣 Design a marketing campaign for a new product")
+            st.write("• 🖥️ Plan a website redesign project")
+        
+        submit_button = st.form_submit_button("Break Down Task")
+    
+    if submit_button:
+        if not task_description:
+            warning_box("Please enter a task description")
+            return
+            
+        with st.spinner("🐙 Otto is breaking down your task..."):
+            steps = break_down_task(task_description)
+            
+        if steps:
+            section_header("Here's your task breakdown:")
+            
+            for i, step in enumerate(steps, 1):
+                
+                emoji_map = {
+                    "define": "🎯", "create": "✨", "gather": "📚", "research": "🔍",
+                    "identify": "👁️", "plan": "📋", "design": "🎨", "write": "✍️",
+                    "organize": "🗂️", "review": "🔄", "test": "✅", "finalize": "🏁",
+                    "track": "📊", "set": "⚙️", "list": "📝", "break": "🧩"
+                }
+                
+                
+                first_word = step.split()[0].lower()
+                emoji = emoji_map.get(first_word, "✨")
+                
+                
+                enhanced_step = f"{emoji} {step}"
+                task_item(enhanced_step, i)
+                
+            success_box("🐙 Otto has broken down your task successfully! Remember to tackle one step at a time.")
+                
+            st.download_button(
+                label="📥 Download Task Breakdown",
+                data="\n".join([f"{i+1}. {step}" for i, step in enumerate(steps)]),
+                file_name="task_breakdown.txt",
+                mime="text/plain"
+            )
+        else:
+            warning_box("Could not generate steps. Please try rewording your task.")
+
 def render_summary_page():
     main_header("📝 Content Summarizer")
     
@@ -508,7 +696,7 @@ def render_chat_page():
         else:
             st.markdown(f'<div class="assistant-message"><strong>Otto:</strong> {content}</div>', unsafe_allow_html=True)
     
-   
+    # Ask a question
     question = st.text_input("Ask Otto a question:")
     
     if st.button("🐙 Send"):
@@ -516,29 +704,29 @@ def render_chat_page():
             warning_box("Please enter a question")
             return
             
-       
+        # Add user message to chat history
         st.session_state.chat_history.append({"role": "user", "content": question})
         
-        
+        # Get the answer
         with st.spinner("Otto is thinking with all eight tentacles..."):
             answer = ask_question(question)
            
             if not answer.startswith("🐙"):
                 answer = f"🐙 {answer}"
             
-       
+        # Add assistant message to chat history
         st.session_state.chat_history.append({"role": "assistant", "content": answer})
         
-        
+        # Rerun the app to show the updated chat
         st.rerun()
         
-   
+    # Clear chat button
     if st.session_state.chat_history:
         if st.button("🧹 Clear Chat"):
             st.session_state.chat_history = []
             st.rerun()
     
-    
+    # Example questions for empty chat
     if not st.session_state.chat_history:
         st.markdown("### Try asking me:")
         
@@ -600,16 +788,19 @@ def initialize_session_state():
     if "quiz_score" not in st.session_state:
         st.session_state.quiz_score = 0
 
+# Function to navigate to a page
+def navigate_to(destination):
+    st.session_state.navigation = destination
 
 def main():
     apply_styles()
     initialize_session_state()
     
-    
+    # Sidebar with logo
     st.sidebar.title("TaskTamer")
-    st.sidebar.image("https://raw.githubusercontent.com/user/project/main/logo.png", width=150, use_column_width=False) 
+    render_octopus_logo_sidebar()
     
-    
+    # Navigation options
     options = {
         "Home": "🏠 Home",
         "Task Breakdown": "🧩 Task Breakdown",
@@ -619,24 +810,29 @@ def main():
         "About": "ℹ️ About"
     }
     
+    # Get current navigation state
     current_nav = st.session_state.navigation
+    
+    # Create sidebar navigation
     selection = st.sidebar.radio(
         "Navigation",
         list(options.keys()),
         format_func=lambda x: options[x],
-        index=list(options.keys()).index(current_nav) if current_nav in options else 0
+        index=list(options.keys()).index(current_nav) if current_nav in options else 0,
+        key="sidebar_navigation"
     )
     
+    # Update navigation if selection changed
     if selection != current_nav:
         st.session_state.navigation = selection
         st.rerun()
     
     st.sidebar.markdown("---")
     
-    
+    # Sidebar info
     st.sidebar.info("**TaskTamer** helps you break down complex tasks, summarize content, and test your knowledge.\n\n🐙 Powered by Otto, your eight-tentacled productivity assistant!")
     
-    
+    # Otto's productivity tips
     with st.sidebar.expander("🐙 Otto's Productivity Tips"):
         tips = [
             "Break tasks into smaller steps to reduce overwhelm.",
@@ -649,10 +845,10 @@ def main():
         ]
         st.write(random.choice(tips))
     
-   
+    # Page rendering
     pages = {
         "Home": render_home_page,
-        #"Task Breakdown": break_down_task,
+        "Task Breakdown": render_task_page,
         "Summarization": render_summary_page,
         "Quiz Generator": render_quiz_page,
         "Chat": render_chat_page,
