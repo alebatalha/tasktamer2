@@ -55,24 +55,27 @@ def render_quiz_page():
             display_quiz(quiz)
 
 def display_quiz(quiz_data):
-   
     if not quiz_data:
         warning_box("Could not generate quiz. Please try with different content.")
+        return
+    
+   
+    if isinstance(quiz_data, list) and quiz_data and "error" in quiz_data[0]:
+        warning_box(quiz_data[0]["error"])
         return
         
     section_header("Your Quiz")
     
-
     if "quiz_answers" not in st.session_state:
         st.session_state.quiz_answers = {}
         st.session_state.quiz_submitted = False
         st.session_state.quiz_score = 0
     
-  
     for i, question in enumerate(quiz_data):
         st.markdown(f'<div class="quiz-question">', unsafe_allow_html=True)
         st.subheader(f"Question {i+1}")
-        st.write(question.get("question", ""))
+        question_text = question.get("question", "No question available.")
+        st.write(question_text)
         
         options = question.get("options", [])
         if options:
@@ -84,9 +87,10 @@ def display_quiz(quiz_data):
                 options,
                 key=f"quiz_{i}"
             )
+        else:
+            st.write("No answer options available.")
         st.markdown('</div>', unsafe_allow_html=True)
     
-
     col1, col2 = st.columns([1, 1])
     
     with col1:
@@ -95,49 +99,31 @@ def display_quiz(quiz_data):
     with col2:
         download_button = st.button("Download Quiz")
     
-
     if submit_button:
         st.session_state.quiz_submitted = True
         st.session_state.quiz_score = 0
         
-
         for i in range(len(quiz_data)):
             answer_key = f"q_{i}"
-            selected = st.session_state[f"quiz_{i}"]
+            selected = st.session_state.get(f"quiz_{i}", "")
+            correct = st.session_state.quiz_answers.get(answer_key, "")
             
-            if selected == st.session_state.quiz_answers[answer_key]:
+            if selected and selected == correct:
                 st.session_state.quiz_score += 1
         
- 
-        score_percentage = (st.session_state.quiz_score / len(quiz_data)) * 100
+        score_percentage = (st.session_state.quiz_score / len(quiz_data)) * 100 if quiz_data else 0
         success_box(f"Your score: {st.session_state.quiz_score}/{len(quiz_data)} ({score_percentage:.1f}%)")
         
-
         for i in range(len(quiz_data)):
             answer_key = f"q_{i}"
-            selected = st.session_state[f"quiz_{i}"]
-            correct = st.session_state.quiz_answers[answer_key]
+            selected = st.session_state.get(f"quiz_{i}", "")
+            correct = st.session_state.quiz_answers.get(answer_key, "")
             
-            if selected == correct:
+            if selected and selected == correct:
                 st.markdown(f'<div class="correct-answer">Question {i+1}: ✓ Correct!</div>', unsafe_allow_html=True)
-            else:
+            elif selected:
                 st.markdown(f'<div class="incorrect-answer">Question {i+1}: ✗ Incorrect. The correct answer is: {correct}</div>', unsafe_allow_html=True)
-        
-   
-        if "quiz_history" not in st.session_state:
-            st.session_state.quiz_history = []
-            
-        from datetime import datetime
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        
-        st.session_state.quiz_history.append({
-            "timestamp": timestamp,
-            "questions": len(quiz_data),
-            "score": st.session_state.quiz_score,
-            "percentage": score_percentage
-        })
     
-
     if download_button:
         quiz_json = json.dumps(quiz_data, indent=2)
         st.download_button(
@@ -147,10 +133,8 @@ def display_quiz(quiz_data):
             mime="application/json"
         )
     
-
     if "quiz_history" in st.session_state and st.session_state.quiz_history:
         with st.expander("Quiz History"):
-            
             history_data = {
                 "Date": [],
                 "Questions": [],
@@ -166,7 +150,6 @@ def display_quiz(quiz_data):
             
             st.dataframe(history_data)
             
-            
             if len(st.session_state.quiz_history) >= 2:
                 st.subheader("Performance Over Time")
                 chart_data = {
@@ -175,7 +158,6 @@ def display_quiz(quiz_data):
                 }
                 st.line_chart(chart_data)
                 
-              
                 avg_score = sum(item["percentage"] for item in st.session_state.quiz_history) / len(st.session_state.quiz_history)
                 trend = "improving" if st.session_state.quiz_history[-1]["percentage"] > avg_score else "consistent"
                 
