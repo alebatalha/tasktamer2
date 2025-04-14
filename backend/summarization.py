@@ -260,7 +260,7 @@ def get_summary_format(summary_data: Dict[str, Any], format_type: str = "concise
         
         return formatted_summary.strip()
     
-    else:  # concise
+    else:  
         return summary_data["main_summary"]
 
 def summarize_content(content: Optional[str] = None, url: Optional[str] = None, format_type: str = "concise", focus_area: str = None) -> str:
