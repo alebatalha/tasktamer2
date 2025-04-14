@@ -1,15 +1,39 @@
 import re
 import random
 from typing import List, Dict, Any, Optional
-from backend.summarization import fetch_webpage_content, get_sentences
 from utils.fallback_detector import USING_NLTK_FALLBACK
-from utils.content_fetcher import process_ur
+from utils.content_fetcher import process_url, fetch_webpage_content
 
 def extract_keywords(text: str) -> List[str]:
-   
+  
+    if USING_NLTK_FALLBACK:
+        try:
+            import nltk
+            from nltk.corpus import stopwords
+            from nltk.tokenize import word_tokenize
+            
+           
+            try:
+                nltk.data.find('corpora/stopwords')
+            except LookupError:
+                nltk.download('stopwords', quiet=True)
+            
+          
+            stop_words = set(stopwords.words('english'))
+            words = word_tokenize(text.lower())
+            
+      
+            keywords = [word for word in words if word.isalnum() and 
+                       word not in stop_words and len(word) > 3]
+            
+            return keywords
+        except (ImportError, LookupError):
+            pass
+    
+ 
     words = re.findall(r'\b[A-Za-z][A-Za-z-]+\b', text)
     
-    
+
     stopwords = {'the', 'a', 'an', 'and', 'or', 'but', 'if', 'then', 'else', 'when', 
                 'at', 'from', 'by', 'for', 'with', 'about', 'against', 'between',
                 'into', 'through', 'during', 'before', 'after', 'above', 'below',
@@ -24,10 +48,11 @@ def extract_keywords(text: str) -> List[str]:
     return keywords
 
 def get_distractors(keywords: List[str], correct_answer: str) -> List[str]:
-  
+   
+   
     filtered_keywords = [w for w in keywords if w != correct_answer and w.lower() != correct_answer.lower()]
     
-   
+  
     if len(filtered_keywords) < 3:
         return ["Option A", "Option B", "Option C"]
     
@@ -42,13 +67,14 @@ def create_fill_in_blank_question(sentence: str, keywords: List[str]) -> Dict[st
     if len(words) < 5:
         return {}
         
-    
+ 
     potential_blanks = []
     for i in range(2, len(words) - 2):
         word = words[i]
         
+      
         if len(word) > 3 and word.lower() not in {'with', 'that', 'this', 'from', 'their', 'about'}:
-            
+          
             cleaned_word = re.sub(r'[^\w\s]', '', word)
             if cleaned_word:
                 potential_blanks.append((i, cleaned_word))
@@ -56,18 +82,18 @@ def create_fill_in_blank_question(sentence: str, keywords: List[str]) -> Dict[st
     if not potential_blanks:
         return {}
     
-   
+ 
     blank_pos, correct_answer = random.choice(potential_blanks)
     
-    
+ 
     question_words = words.copy()
     question_words[blank_pos] = "_____"
     question = " ".join(question_words)
     
-    
+   
     distractors = get_distractors(keywords, correct_answer)
     
-    
+  
     options = [correct_answer] + distractors
     random.shuffle(options)
     
@@ -77,15 +103,34 @@ def create_fill_in_blank_question(sentence: str, keywords: List[str]) -> Dict[st
         "answer": correct_answer
     }
 
-def generate_quiz(content: Optional[str] = None, url: Optional[str] = None, num_questions: int = 3) -> List[Dict[str, Any]]:
+def get_sentences(text: str) -> List[str]:
+  
+    if USING_NLTK_FALLBACK:
+        try:
+            import nltk
+            from nltk.tokenize import sent_tokenize
+            
+           
+            try:
+                nltk.data.find('tokenizers/punkt')
+            except LookupError:
+                nltk.download('punkt', quiet=True)
+            
+            return sent_tokenize(text)
+        except (ImportError, LookupError):
+            pass
+    
+  
+    return re.split(r'(?<=[.!?])\s+', text)
 
+def generate_quiz(content: Optional[str] = None, url: Optional[str] = None, num_questions: int = 3) -> List[Dict[str, Any]]:
+    
     if url:
-        content = fetch_webpage_content(url)
+        content = process_url(url)
         
     if not content:
         return []
     
-   
     num_questions = max(1, min(num_questions, 10))
     
     
@@ -93,25 +138,25 @@ def generate_quiz(content: Optional[str] = None, url: Optional[str] = None, num_
     if len(sentences) < 3:
         return []
     
-    
     keywords = extract_keywords(content)
     
-   
+ 
     valid_sentences = [s for s in sentences if len(s.split()) >= 5]
     if len(valid_sentences) < num_questions:
-       
+ 
         valid_sentences = valid_sentences * (num_questions // len(valid_sentences) + 1)
     
+ 
     selected_sentences = random.sample(valid_sentences, num_questions)
     
-   
+    
     quiz = []
     for sentence in selected_sentences:
         question = create_fill_in_blank_question(sentence, keywords)
         if question:
             quiz.append(question)
     
-    
+
     while len(quiz) < num_questions and len(valid_sentences) > len(quiz):
         remaining = [s for s in valid_sentences if s not in selected_sentences]
         if not remaining:
