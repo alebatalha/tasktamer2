@@ -1,11 +1,14 @@
 import streamlit as st
 import re
 import json
-from backend.task_breakdown import break_task, TaskBreakdown
-from backend.summarization import summarize_content
-from backend.question_generation import generate_quiz
-from backend.chat_assistant import ask_question
-
+import streamlit as st
+from ui.pages.home_page import render_home_page
+from ui.pages.task_page import render_task_page
+from ui.pages.summary_page import render_summary_page
+from ui.pages.quiz_pages import render_quiz_page
+from ui.pages.chat_page import render_chat_page
+from ui.pages.about_page import render_about_page
+from ui.styles import apply_styles
 
 APP_TITLE = "TaskTamer"
 APP_DESCRIPTION = "**TaskTamer** helps you break down complex tasks, summarize content, and test your knowledge."
@@ -233,6 +236,13 @@ def apply_styles():
     </style>
     """, unsafe_allow_html=True)
 
+def initialize_session_state():
+    
+    if "initialized" not in st.session_state:
+        st.session_state.initialized = True
+        st.session_state.task_data = {}
+        st.session_state.quiz_history = []
+        st.session_state.chat_history = []
 
 def main_header(text):
     st.markdown(f'<h1 class="main-header">{text}</h1>', unsafe_allow_html=True)
