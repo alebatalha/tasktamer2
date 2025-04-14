@@ -2,18 +2,11 @@ import re
 import random
 from typing import List, Dict, Any, Optional
 from backend.summarization import fetch_webpage_content, get_sentences
+from utils.fallback_detector import USING_NLTK_FALLBACK
+from utils.content_fetcher import process_ur
 
 def extract_keywords(text: str) -> List[str]:
-    """
-    Extract potential keywords from text.
-    
-    Args:
-        text: The text to extract keywords from
-        
-    Returns:
-        List of potential keywords
-    """
-    
+   
     words = re.findall(r'\b[A-Za-z][A-Za-z-]+\b', text)
     
     
@@ -31,17 +24,7 @@ def extract_keywords(text: str) -> List[str]:
     return keywords
 
 def get_distractors(keywords: List[str], correct_answer: str) -> List[str]:
-    """
-    Generate distractor options for quiz questions.
-    
-    Args:
-        keywords: List of potential keywords to use as distractors
-        correct_answer: The correct answer
-        
-    Returns:
-        List of distractor options
-    """
-   
+  
     filtered_keywords = [w for w in keywords if w != correct_answer and w.lower() != correct_answer.lower()]
     
    
@@ -54,16 +37,7 @@ def get_distractors(keywords: List[str], correct_answer: str) -> List[str]:
     return distractors
 
 def create_fill_in_blank_question(sentence: str, keywords: List[str]) -> Dict[str, Any]:
-    """
-    Create a fill-in-the-blank question from a sentence.
-    
-    Args:
-        sentence: The sentence to create a question from
-        keywords: List of potential keywords to use
-        
-    Returns:
-        A question dict with question, options, and answer
-    """
+ 
     words = sentence.split()
     if len(words) < 5:
         return {}
@@ -104,18 +78,7 @@ def create_fill_in_blank_question(sentence: str, keywords: List[str]) -> Dict[st
     }
 
 def generate_quiz(content: Optional[str] = None, url: Optional[str] = None, num_questions: int = 3) -> List[Dict[str, Any]]:
-    """
-    Generate a quiz from the provided content or webpage.
-    
-    Args:
-        content: Text content to create quiz from
-        url: URL to fetch content from
-        num_questions: Number of questions to generate
-        
-    Returns:
-        List of quiz questions with options and answers
-    """
-   
+
     if url:
         content = fetch_webpage_content(url)
         
