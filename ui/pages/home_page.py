@@ -1,13 +1,12 @@
 import streamlit as st
 from ui.styles import main_header, info_box, logo_header
+import random
 
 def render_home_page():
-    
     logo_header()
     
     st.write("Your personal productivity assistant that helps you break down complex tasks, summarize information, and generate quizzes.")
     
-  
     col1, col2 = st.columns(2)
     
     with col1:
@@ -15,28 +14,27 @@ def render_home_page():
         st.write("Turn overwhelming tasks into manageable steps")
         if st.button("Try Task Breakdown", key="task_btn"):
             st.session_state["navigation"] = "Task Breakdown"
-            st.experimental_rerun()
+            st.rerun()
             
         st.subheader("📝 Summarization")
         st.write("Extract key insights from text and web pages")
         if st.button("Try Summarization", key="summary_btn"):
             st.session_state["navigation"] = "Summarization"
-            st.experimental_rerun()
+            st.rerun()
             
     with col2:
         st.subheader("🧠 Quiz Generator")
         st.write("Create quizzes from your learning materials")
         if st.button("Try Quiz Generator", key="quiz_btn"):
             st.session_state["navigation"] = "Quiz Generator"
-            st.experimental_rerun()
+            st.rerun()
             
         st.subheader("🤖 Otto - Your Assistant")
         st.write("Ask questions and get help anytime")
         if st.button("Ask Otto", key="otto_btn"):
             st.session_state["navigation"] = "Otto Assistant"
-            st.experimental_rerun()
+            st.rerun()
     
-   
     info_box("""
     <b>Getting Started:</b>
     <ol>
@@ -46,11 +44,9 @@ def render_home_page():
     </ol>
     """)
     
- 
     st.markdown("---")
     st.subheader("✨ How TaskTamer Helps You")
     
-   
     with st.expander("Task Breakdown - Conquer large projects"):
         st.write("""
         Breaking down large, complex tasks into manageable steps helps reduce overwhelm and makes progress easier to track.
@@ -99,8 +95,6 @@ def render_home_page():
         - Tips for managing ADHD and overcoming procrastination
         """)
     
-
-    import random
     productivity_tips = [
         "Break large tasks into smaller, manageable steps to reduce overwhelm.",
         "Use the Pomodoro Technique: 25 minutes of focused work followed by a 5-minute break.",

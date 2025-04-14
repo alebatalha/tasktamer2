@@ -18,9 +18,15 @@ from utils.content_fetcher import fetch_webpage_content
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
-nltk.data.find('tokenizers/punkt')
-nltk.data.find('corpora/stopwords')
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt')
+    
+try:
+    nltk.data.find('corpora/stopwords')
+except LookupError:
+    nltk.download('stopwords')
 
 class TextRankSummarizer:
     def __init__(self, language='english'):
@@ -216,38 +222,6 @@ class AcademicFocusSummarizer:
         except Exception as e:
             logger.error(f"Error generating focused summary: {str(e)}", exc_info=True)
             return {"main_summary": "", "key_points": [], "structure": {}}
-
-@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
-def fetch_webpage_content(url: str) -> str:
-    try:
-        
-        parsed = urlparse(url)
-        if not parsed.scheme in ['http', 'https'] or not parsed.netloc:
-            raise ValueError("Invalid URL format. Please provide a valid http or https URL.")
-        
-        response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=10)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.text, "html.parser")
-        
-        for tag in soup(['script', 'style', 'header', 'footer', 'nav', 'aside', 'meta', 'iframe']):
-            tag.decompose()
-            
-        main_content = soup.find('main') or soup.find('article') or soup.find('body')
-        
-        if main_content:
-            paragraphs = main_content.find_all('p')
-            if paragraphs:
-                text = ' '.join([p.get_text().strip() for p in paragraphs if p.get_text().strip()])
-            else:
-                text = main_content.get_text(separator=' ', strip=True)
-            
-            text = re.sub(r'\s+', ' ', text)
-            return text if text.strip() else "No readable content found."
-        
-        return "No readable content found."
-    except (requests.RequestException, ValueError) as e:
-        logger.error(f"Error fetching webpage {url}: {str(e)}")
-        raise
 
 def extract_main_content(text: str) -> str:
     try:

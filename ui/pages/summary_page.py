@@ -118,13 +118,12 @@ def render_summary_page():
                 content = study_text
             elif study_url and is_valid_url(study_url):
                 with st.spinner("Fetching web content..."):
-                    from backend.summarization import fetch_webpage_content
                     content = fetch_webpage_content(study_url)
             else:
                 warning_box("Please enter either text or a valid URL")
                 return
                 
-            if content and not content.startswith("Error"):
+            if content and not isinstance(content, str) or (isinstance(content, str) and not content.startswith("Error")):
                 with st.spinner("Generating study notes..."):
                     notes = generate_study_notes(content)
                 

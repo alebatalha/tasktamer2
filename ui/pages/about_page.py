@@ -1,8 +1,8 @@
 import streamlit as st
-from ui.styles import main_header, section_header, info_box, render_footer
+import datetime
+from ui.styles import main_header, section_header, info_box
 
 def render_about_page():
-      
     main_header("About TaskTamer")
     
     st.write("""
@@ -70,13 +70,7 @@ def render_about_page():
     For more information about this project or to provide feedback, please contact Alessandra Batalha via Dublin Business School.
     """)
     
- 
     st.markdown("---")
     st.caption("TaskTamer version 2.0")
-    import datetime
     current_year = datetime.datetime.now().year
     st.caption(f"© {current_year} Alessandra Batalha. All rights reserved.")
-    
-  
-    if 'render_footer' in globals():
-        render_footer()
