@@ -198,51 +198,6 @@ def is_valid_url(url):
     )
     return bool(url_pattern.match(url))
 
-def render_octopus_logo():
-    octopus_svg = """
-    <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-            <linearGradient id="octopusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#00BCD4" />
-                <stop offset="100%" stop-color="#9C27B0" />
-            </linearGradient>
-        </defs>
-        <g fill="url(#octopusGradient)">
-            <!-- Octopus body -->
-            <circle cx="50" cy="40" r="25" />
-            
-            <!-- Tentacles -->
-            <path d="M25,50 Q15,60 20,80" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
-            <path d="M35,60 Q25,70 15,75" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
-            <path d="M50,65 Q50,80 45,90" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
-            <path d="M65,60 Q75,70 85,75" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
-            <path d="M75,50 Q85,60 80,80" stroke="url(#octopusGradient)" stroke-width="6" fill="none" />
-            
-            <!-- Eyes -->
-            <circle cx="40" cy="35" r="5" fill="white" />
-            <circle cx="60" cy="35" r="5" fill="white" />
-            <circle cx="40" cy="35" r="2" fill="#333" />
-            <circle cx="60" cy="35" r="2" fill="#333" />
-        </g>
-    </svg>
-    """
-    
-    st.markdown(f"""
-    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
-        {octopus_svg}
-    </div>
-    """, unsafe_allow_html=True)
-
-def render_logo():
-    st.markdown(
-        '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px;">'
-        '<div class="logo-text">TASK TAMER</div>'
-        '<div class="logo-tagline">GETTING THINGS DONE</div>'
-        '</div>', 
-        unsafe_allow_html=True
-    )
-    render_octopus_logo()
-
 def render_octopus_logo_sidebar():
     octopus_svg = """
     <svg width="80" height="80" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -282,8 +237,7 @@ def render_octopus_logo_sidebar():
     """, unsafe_allow_html=True)
 
 def render_home_page():
-    render_logo()
-    
+        
     st.write("Your personal productivity assistant with eight tentacles ready to help you break down complex tasks, summarize information, and generate quizzes!")
     
     col1, col2 = st.columns(2)
