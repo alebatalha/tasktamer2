@@ -714,7 +714,7 @@ def main():
     
     # Sidebar with logo
     st.sidebar.title("TaskTamer")
-    render_octopus_logo_sidebar()
+  
     
     # Navigation options
     options = {
