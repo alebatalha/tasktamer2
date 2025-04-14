@@ -20,8 +20,7 @@ APP_DESCRIPTION = "**TaskTamer** helps you break down complex tasks, summarize c
 DEVELOPER_NAME = "Alessandra Batalha"
 
 def initialize_session_state():
-   
-
+    
     if "initialized" not in st.session_state:
         st.session_state.initialized = True
     
@@ -48,20 +47,19 @@ def initialize_session_state():
         st.session_state.navigation = "Home"
 
 def main():
-   
+  
     try:
-    
+        
         apply_styles()
         
-    
+       
         initialize_session_state()
         
-    
+     
         st.sidebar.title("TaskTamer")
         st.sidebar.markdown("Your productivity assistant")
         st.sidebar.markdown("---")
-        
-     
+    
         pages = {
             "Home": render_home_page,
             "Task Breakdown": render_task_page,
@@ -71,24 +69,24 @@ def main():
             "About": render_about_page
         }
         
-        
+       
         if "navigation" in st.session_state and st.session_state.navigation in pages:
             selection = st.session_state.navigation
-            
+      
             st.sidebar.radio("Navigate", list(pages.keys()), 
-                           index=list(pages.keys()).index(selection), key="nav_radio")
+                             index=list(pages.keys()).index(selection), key="nav_radio")
         else:
             selection = st.sidebar.radio("Navigate", list(pages.keys()), index=0, key="nav_radio")
             st.session_state.navigation = selection
         
-   
+        
         st.sidebar.markdown("---")
         st.sidebar.info(f"{APP_DESCRIPTION}\n\nMade with ❤️ by {DEVELOPER_NAME}")
         
-      
+   
         st.sidebar.caption(f"Version 2.0 | {datetime.datetime.now().strftime('%Y-%m-%d')}")
         
- 
+       
         pages[selection]()
         
     except st.StreamlitAPIException as sae:
