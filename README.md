@@ -6,6 +6,8 @@ TaskTamer is a productivity tool designed to help users manage their learning an
 
 Check out the live application: [TaskTamer](https://tasktamer2-2vvlazxfwprjowe6jty7cu.streamlit.app/)
 
+**Direct Link**: https://tasktamer2-2vvlazxfwprjowe6jty7cu.streamlit.app/
+
 ## Features
 
 ### 🧩 Task Breakdown
